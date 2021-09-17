@@ -1,33 +1,3 @@
-//INPUT
-{
-    "Command" : "",
-    "Params" : {
-        "Channel" : "",
-        "Level" : "",
-        "Freq"  : "",
-        "Control" : ""
-    }
-}
-
-//OUTPUT
-{
-    "Action" : "",
-    "Result" : {
-        "TP0" : {
-            "Level" : "",
-            "Freq"  : ""
-        },
-        "TP1" : {
-            "Level" : "",
-            "Freq"  : ""
-        },
-        "TP.." : {
-            "Level" : "",
-            "Freq"  : ""
-        }
-    }
-}
-
 //INPUT EXAMPLES
 {
     "Command" : "SigOn",

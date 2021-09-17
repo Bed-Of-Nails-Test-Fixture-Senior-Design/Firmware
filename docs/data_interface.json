@@ -1,0 +1,33 @@
+{
+    "Action": {
+        "description": "Task performed by the DUE",
+        "type": "string",
+        "possible_values": [
+            "ACResult",
+            "DistResult",
+            "DCResult",
+            "NoiseResult"
+        ],
+        "required": true
+    },
+    "Result": {
+        "TP[$channel]": {
+            "$channel": "Testpoint channels (0-11)",
+            "description": "Result from testpoint",
+            "properties" :{
+                "Level": {
+                    "description": "Output level (Vrms)",
+                    "type": "float",
+                    "min": 0,
+                    "max": 12
+                },
+                "Freq": {
+                    "description": "Output frequency (Hz)",
+                    "type": "float",
+                    "min": 25,
+                    "max": 8000
+                }
+            }
+        }
+    }
+}

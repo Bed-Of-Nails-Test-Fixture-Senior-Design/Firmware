@@ -17,7 +17,7 @@ void setup() {
 }
 
 void loop() {
-;
+  ;
 }
 
 void TC3_Handler()  //TODO: Potentially put this into NCO class

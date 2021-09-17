@@ -1,0 +1,51 @@
+{
+    "Command": {
+        "description": "Command sent from GUI",
+        "type": "string",
+        "possible_values": [
+            "SigOn",
+            "SigOff",
+            "MeasAC",
+            "MeasDist",
+            "MeasDC",
+            "MeasNoise",
+            "PotCtrl",
+            "PresCtrl"
+        ],
+        "required": true
+    },
+    "Params": {
+        "Channel": {
+            "description": "Channel to perform command on",
+            "type": "string",
+            "possible_values": [
+                "Guitar",
+                "Aux"
+            ],
+            "required": false
+        },
+        "Level": {
+            "description": "Input level (Vrms)",
+            "type": "float",
+            "min": 0,
+            "max": 12,
+            "required": false
+        },
+        "Freq": {
+            "description": "Frequency (Hz)",
+            "type": "float",
+            "min": 25,
+            "max": 8000,
+            "required": false
+        },
+        "Control": {
+            "description": "Misc control value",
+            "type": "string",
+            "possible_values": [
+                "On",
+                "Off"
+            ],
+            "required": false
+        }
+    }
+}
