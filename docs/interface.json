@@ -1,0 +1,106 @@
+//INPUT
+{
+    "Command" : "",
+    "Params" : {
+        "Channel" : "",
+        "Level" : "",
+        "Freq"  : "",
+        "Control" : ""
+    }
+}
+
+//OUTPUT
+{
+    "Action" : "",
+    "Result" : {
+        "TP0" : {
+            "Level" : "",
+            "Freq"  : ""
+        },
+        "TP1" : {
+            "Level" : "",
+            "Freq"  : ""
+        },
+        "TP.." : {
+            "Level" : "",
+            "Freq"  : ""
+        }
+    }
+}
+
+//INPUT EXAMPLES
+{
+    "Command" : "SigOn",
+    "Params" : {
+        "Channel" : "Guitar",
+        "Level" : "2.2",
+        "Freq"  : "1000"
+    }
+}
+
+{
+    "Command" : "PresCtrl",
+    "Params" : {
+        "Control" : "On"
+    }
+}
+
+//OUTPUT EXAMPLES
+{
+    "Action" : "Distortion",
+    "Result" : "20%"
+}
+
+{
+    "Action" : "ACAll",
+    "Result" : { 
+        "TP0" : {
+            "Level" : "2.23",
+            "Freq"  : "4000"
+        },
+        "TP1" : {
+            "Level" : "1.76",
+            "Freq"  : "3500"
+        },
+        "TP2" : {
+            "Level" : "2.23",
+            "Freq"  : "4000"
+        },
+        "TP3" : {
+            "Level" : "1.76",
+            "Freq"  : "3500"
+        },
+        "TP4" : {
+            "Level" : "2.23",
+            "Freq"  : "4000"
+        },
+        "TP5" : {
+            "Level" : "1.76",
+            "Freq"  : "3500"
+        },
+        "TP6" : {
+            "Level" : "2.23",
+            "Freq"  : "4000"
+        },
+        "TP7" : {
+            "Level" : "1.76",
+            "Freq"  : "3500"
+        },
+        "TP8" : {
+            "Level" : "2.23",
+            "Freq"  : "4000"
+        },
+        "TP9" : {
+            "Level" : "1.76",
+            "Freq"  : "3500"
+        },
+        "TP10" : {
+            "Level" : "2.23",
+            "Freq"  : "4000"
+        },
+        "TP11" : {
+            "Level" : "1.76",
+            "Freq"  : "3500"
+        }
+    }
+}
