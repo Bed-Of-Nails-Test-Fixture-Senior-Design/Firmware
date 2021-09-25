@@ -33,22 +33,18 @@ void loop(){
 
     Serial.print("Digital Result[0]: ");
     Serial.println(ADC0_Result);
-    Serial.print("Voltage Result[0]: ");
+    Serial.print("Digital Result as Voltage [0]: ");
     Serial.println(ADC0_Result * 3.3/4096);
 
     Serial.print("Digital Result[1]: ");
     Serial.println(ADC1_Result);
-    Serial.print("Voltage Result[1]: ");
+    Serial.print("Digital Result as Voltage [1]: ");
     Serial.println(ADC1_Result * 3.3/4096);
 
     Serial.print("Digital Result[2]: ");
     Serial.println(ADC2_Result);
-    Serial.print("Voltage Result[2]: ");
+    Serial.print("Digital Result as Voltage [2]: ");
     Serial.println(ADC2_Result * 3.3/4096);
-
-    
-//    Serial.println(ADC1_Result);
-//    Serial.println(ADC2_Result);
 
     interruptFlag = 0;
 
@@ -58,15 +54,14 @@ void loop(){
 void TC3_Handler()
 {
   TC_GetStatus(TC1, 0);
-  ADC0_Result = ADC->ADC_CDR[7]; 
-  ADC1_Result = ADC->ADC_CDR[6]; 
-  ADC2_Result = ADC->ADC_CDR[5]; 
+  ADC0_Result = ADC->ADC_CDR[7]; //read conversion A0
+  ADC1_Result = ADC->ADC_CDR[6]; //read conversion A1
+  ADC2_Result = ADC->ADC_CDR[5]; //read conversion A2
   interruptFlag = 1;
 
   ADC->ADC_CR |= ADC_CR_START;            // Begin the next ADC conversion. 
   
 }
-
 
 void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
   pmc_set_writeprotect(false);
@@ -81,15 +76,13 @@ void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency) {
   NVIC_EnableIRQ(irq);
 }
 
-
-
 void AdcSetup(){ 
   ADC->ADC_WPMR &= ~(ADC_WPMR_WPEN); //Disable the Write Protect Mode 
-  ADC->ADC_CHER |= ADC_CHER_CH7; //Enable A0 pin
-  ADC->ADC_CHER |= ADC_CHER_CH6; //Enable A1 pin 
-  ADC->ADC_CHER |= ADC_CHER_CH5; //Enable A2 pin 
+  ADC->ADC_CHER |= ADC_CHER_CH7; //Enable Channel 7 (A0 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH6; //Enable Channel 6 (A1 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH5; //Enable Channel 5 (A2 pin) 
   ADC->ADC_MR = 0; 
-  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz 
+  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions
   ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
   ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
   ADC->ADC_EMR = 0;
