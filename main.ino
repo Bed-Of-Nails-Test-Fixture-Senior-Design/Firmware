@@ -2,15 +2,17 @@
 #include "inc/nco.h"
 #include "inc/rms.h"
 #include "inc/pot.h"
+#include "lib/ArduinoJson.h"
 
 #define FS 44100
 
 int LUT[2048];
-
+String incomingStr;
+JsonObject object;
+char Buf[200];
 unsigned int cycle;
-void startTimer(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
-NCO NCO0(0, 0);
-NCO NCO1(0, 0);
+// NCO NCO0(0, 0);
+// NCO NCO1(0, 0);
 
 void setup() {
   Serial.begin(9600);
@@ -19,13 +21,33 @@ void setup() {
     LUT[i] = (2047*sin(2*PI*i/2048) + 2048); // build lookup table for our digitally created sine wave
   }
   cycle = 0;
-  startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
 }
 
 void loop() {
   if (Serial.available()){
-    
+    incomingStr = Serial.readString();
+    // Serial.println(incomingStr);
+    incomingStr.toCharArray(Buf, 200);
+    serialHandler(Buf);
   };
+  delay(100);
+}
+
+void serialHandler(char* inputStream) {
+  object = serialParse(Buf);  //26 micro seconds to deserialize single value json string
+  Serial.println((const char*) object["hello"]);
+  //startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
+}
+
+JsonObject serialParse(char* inputStream) {
+  const size_t CAPACITY = JSON_OBJECT_SIZE(1);
+  StaticJsonDocument<CAPACITY> doc;
+
+  // deserialize the object
+  deserializeJson(doc, inputStream);
+
+  // extract the data
+  return doc.as<JsonObject>();
 }
 
 void TC3_Handler()

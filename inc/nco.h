@@ -5,7 +5,6 @@
 class NCO {
     private:
         float frequency, amplitude;             //frequency and amplitude of NCO
-        void Timer_Setup();
         void DAC_Setup();
     public:
         NCO(float frequency, float amplitude);

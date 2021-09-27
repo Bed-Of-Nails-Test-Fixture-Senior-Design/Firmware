@@ -4,7 +4,6 @@ NCO::NCO(float freq, float amp){
   this->setFrequency(freq);
   this->setAmplitude(amp);
   DAC_Setup();
-  Timer_Setup(); 
 }
   
 void NCO::DAC_Setup() { //TODO: NEED TO PARSE THIS FUNCTION
