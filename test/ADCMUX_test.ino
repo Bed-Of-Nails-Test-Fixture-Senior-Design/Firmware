@@ -1,3 +1,4 @@
+#include <Arduino.h>
 
 //uint32_t  AdcResult[3];
 uint32_t  ADC0_Result;

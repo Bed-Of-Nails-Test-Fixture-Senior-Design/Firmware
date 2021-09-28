@@ -1,8 +1,8 @@
 #include <Arduino.h>
-#include "inc/nco.h"
-#include "inc/rms.h"
-#include "inc/pot.h"
-#include "lib/ArduinoJson.h"
+#include "../include/nco.h"
+#include "../include/rms.h"
+#include "../include/pot.h"
+#include "../lib/ArduinoJson.h"
 
 #define FS 44100
 
@@ -11,11 +11,14 @@ String incomingStr;
 JsonObject object;
 char Buf[200];
 unsigned int cycle;
+void serialHandler(char* inputStream);
+JsonObject serialParse(char* inputStream);
 // NCO NCO0(0, 0);
 // NCO NCO1(0, 0);
 
 void setup() {
   Serial.begin(9600);
+  // Serial.end();
   for(int i=0; i < 2048; i++)
   {
     LUT[i] = (2047*sin(2*PI*i/2048) + 2048); // build lookup table for our digitally created sine wave
@@ -35,7 +38,14 @@ void loop() {
 
 void serialHandler(char* inputStream) {
   object = serialParse(Buf);  //26 micro seconds to deserialize single value json string
-  Serial.println((const char*) object["hello"]);
+  const char* command = object["Command"];
+  const char sig[] = "SigOn";
+  Serial.println(command);
+  if (((const char*) object["Command"]) == ((const char*) sig)){
+    Serial.println("Yup");
+    // Serial.println((const char*) object["Params"]["Channel"]);
+    // Serial.println((const char*) object["Params"]);
+  }
   //startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
 }
 

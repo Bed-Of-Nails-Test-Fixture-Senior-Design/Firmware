@@ -1,4 +1,4 @@
-#include "../inc/pot.h"
+#include "../include/pot.h"
 
 // Writes to digital outputs to control potentiometer relays
 void POT::set_CCW(){

@@ -1,4 +1,4 @@
-#include "../inc/rms.h"
+#include "../include/rms.h"
 
 void ADCRMS::ADCSetup(){ 
   ADC->ADC_WPMR &= ~(ADC_WPMR_WPEN); //Disable the Write Protect Mode 

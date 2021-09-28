@@ -1,6 +1,7 @@
-#include "../inc/nco.h"
-#include "../inc/rms.h"
-#include "../inc/pot.h"
+#include <Arduino.h>
+#include "../include/nco.h"
+#include "../include/rms.h"
+#include "../include/pot.h"
 
 #define FS 44100
 
