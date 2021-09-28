@@ -8,7 +8,7 @@
 
 int LUT[2048];
 String incomingStr;
-JsonObject object;
+JsonObject jsonObj;
 char Buf[200];
 unsigned int cycle;
 void serialHandler(char* inputStream);
@@ -18,7 +18,6 @@ JsonObject serialParse(char* inputStream);
 
 void setup() {
   Serial.begin(9600);
-  // Serial.end();
   for(int i=0; i < 2048; i++)
   {
     LUT[i] = (2047*sin(2*PI*i/2048) + 2048); // build lookup table for our digitally created sine wave
@@ -29,7 +28,6 @@ void setup() {
 void loop() {
   if (Serial.available()){
     incomingStr = Serial.readString();
-    // Serial.println(incomingStr);
     incomingStr.toCharArray(Buf, 200);
     serialHandler(Buf);
   };
@@ -37,20 +35,24 @@ void loop() {
 }
 
 void serialHandler(char* inputStream) {
-  object = serialParse(Buf);  //26 micro seconds to deserialize single value json string
-  const char* command = object["Command"];
-  const char sig[] = "SigOn";
-  Serial.println(command);
-  if (((const char*) object["Command"]) == ((const char*) sig)){
-    Serial.println("Yup");
-    // Serial.println((const char*) object["Params"]["Channel"]);
-    // Serial.println((const char*) object["Params"]);
+  jsonObj = serialParse(Buf);  //26 micro seconds to deserialize single value json string
+  const char* command = jsonObj["Command"];
+  if (strcmp(command, "SigOn") == 0){
+    Serial.println((const char*) jsonObj["Params"]["Channel"]); 
+  } else if (strcmp(command, "SigOff") == 0){
+  } else if (strcmp(command, "MeasAC") == 0){
+  } else if (strcmp(command, "MeasDist") == 0){
+  } else if (strcmp(command, "MeasDC") == 0){
+  } else if (strcmp(command, "PotCtrl") == 0){
+  } else if (strcmp(command, "PresCtrl") == 0){
+  } else {
+    Serial.println("Invalid Command");
   }
   //startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
 }
 
 JsonObject serialParse(char* inputStream) {
-  const size_t CAPACITY = JSON_OBJECT_SIZE(1);
+  const size_t CAPACITY = JSON_OBJECT_SIZE(10);
   StaticJsonDocument<CAPACITY> doc;
 
   // deserialize the object
