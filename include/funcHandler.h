@@ -10,7 +10,7 @@ class funcHandler {
         void setup();
     public:
         funcHandler();
-        float SigOn(float inputLevel, int frequency);
+        void SigOn(float inputLevel, int frequency);
         void SigOff();
         void MeasAC(float inputLevel, float frequency);
         void MeasDist(float outputPower);

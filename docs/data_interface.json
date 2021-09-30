@@ -6,7 +6,8 @@
             "ACResult",
             "DistResult",
             "DCResult",
-            "NoiseResult"
+            "NoiseResult",
+            "ConfirmAct"
         ],
         "required": true
     },

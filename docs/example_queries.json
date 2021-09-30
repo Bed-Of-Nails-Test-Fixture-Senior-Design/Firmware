@@ -8,6 +8,8 @@
     }
 }
 
+{"Command":"SigOn","Params":{"Channel":"Guitar","Level":2.4,"Freq":1000}}
+
 {
     "Command" : "PresCtrl",
     "Params" : {

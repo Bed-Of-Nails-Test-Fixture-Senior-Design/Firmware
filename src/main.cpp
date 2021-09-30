@@ -8,16 +8,16 @@
 #define FS 44100
 
 int LUT[2048];
-String incomingStr;
-JsonObject jsonObj;
 char Buf[200];
 unsigned int cycle;
-funcHandler dispatcher;
-
-//float test;
+String incomingStr;
+const size_t CAPACITY = JSON_OBJECT_SIZE(20);
+StaticJsonDocument<CAPACITY> doc;
+JsonObject jsonObj;
+funcHandler dispatch;
 
 void serialHandler(char *inputStream);
-JsonObject serialParse(char *inputStream);
+void serialParse(char *inputStream);
 // NCO NCO0(0, 0);
 // NCO NCO1(0, 0);
 
@@ -37,57 +37,42 @@ void loop()
   {
     incomingStr = Serial.readString();
     incomingStr.toCharArray(Buf, 200);
+    deserializeJson(doc, Buf);
+    jsonObj = doc.as<JsonObject>();
     serialHandler(Buf);
   };
-  delay(100);
 }
 
 void serialHandler(char *inputStream)
 {
-  jsonObj = serialParse(Buf); //26 micro seconds to deserialize single value json string
   const char *command = jsonObj["Command"];
-  if (strcmp(command, "SigOn") == 0)
-  {
-    //Serial.println((const char *)jsonObj["Params"]["Channel"]);
-    Serial.println(jsonObj["Params"]["Level"].as<float>());
-    Serial.println(jsonObj["Params"]["Freq"].as<int>());
-    //test = dispatcher.SigOn(jsonObj["Params"]["Level"].as<float>(), jsonObj["Params"]["Freq"].as<int>());
+  if (strcmp(command, "SigOn") == 0)  {
+    dispatch.SigOn(jsonObj["Params"]["Level"].as<float>(), 
+                     jsonObj["Params"]["Freq"].as<int>());
   }
-  else if (strcmp(command, "SigOff") == 0)
-  {
+  else if (strcmp(command, "SigOff") == 0)  {
+    dispatch.SigOff();
   }
-  else if (strcmp(command, "MeasAC") == 0)
-  {
+  else if (strcmp(command, "MeasAC") == 0)  {
+    dispatch.MeasAC(jsonObj["Params"]["Level"].as<float>(),
+                      jsonObj["Params"]["Freq"].as<int>());
   }
-  else if (strcmp(command, "MeasDist") == 0)
-  {
+  else if (strcmp(command, "MeasDist") == 0)  {
+    dispatch.MeasDist(jsonObj["Params"]["Level"].as<float>());
   }
-  else if (strcmp(command, "MeasDC") == 0)
-  {
+  else if (strcmp(command, "MeasDC") == 0)  {
+    dispatch.MeasDC();
   }
-  else if (strcmp(command, "PotCtrl") == 0)
-  {
+  else if (strcmp(command, "PotCtrl") == 0)  {
+    dispatch.PotCtrl();
   }
-  else if (strcmp(command, "PresCtrl") == 0)
-  {
+  else if (strcmp(command, "PresCtrl") == 0)  {
+    dispatch.PresCtrl();
   }
-  else
-  {
+  else  {
     Serial.println("Invalid Command");
   }
   //startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
-}
-
-JsonObject serialParse(char *inputStream)
-{
-  const size_t CAPACITY = JSON_OBJECT_SIZE(20);
-  StaticJsonDocument<CAPACITY> doc;
-
-  // deserialize the object
-  deserializeJson(doc, inputStream);
-
-  // extract the data
-  return doc.as<JsonObject>();
 }
 
 void TC3_Handler()

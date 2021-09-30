@@ -8,8 +8,9 @@ void funcHandler::setup(){
 
 }
 
-float funcHandler::SigOn(float inputLevel, int frequency){
-    return frequency;
+void funcHandler::SigOn(float inputLevel, int frequency){
+    Serial.println(inputLevel);
+    Serial.println(frequency);
 }
 
 void funcHandler::SigOff(){

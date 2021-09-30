@@ -43,7 +43,10 @@
             "type": "string",
             "possible_values": [
                 "On",
-                "Off"
+                "Off",
+                "CW",
+                "Mid",
+                "CCW"
             ],
             "required": false
         }
