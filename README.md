@@ -5,3 +5,5 @@ SAM3X8C Datasheet: https://ww1.microchip.com/downloads/en/devicedoc/atmel-11057-
 Contributors:
 - JUSTIN HAJJIRI
 - CADE WALTON
+-Omar Almatar
+-Daniel Vazquez
