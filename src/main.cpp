@@ -20,6 +20,7 @@ void serialHandler(char *inputStream);
 void serialParse(char *inputStream);
 // NCO NCO0(0, 0);
 // NCO NCO1(0, 0);
+POT VolumePot(3, 4, 5);
 
 void setup()
 {
@@ -41,6 +42,7 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler(Buf);
   };
+  VolumePot.set_CCW()
 }
 
 void serialHandler(char *inputStream)
