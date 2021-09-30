@@ -3,8 +3,8 @@
     "Command" : "SigOn",
     "Params" : {
         "Channel" : "Guitar",
-        "Level" : "2.2",
-        "Freq"  : "1000"
+        "Level" : 2.2,
+        "Freq"  : 1000
     }
 }
 

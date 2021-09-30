@@ -10,8 +10,13 @@ class funcHandler {
         void setup();
     public:
         funcHandler();
-        void SigOn();
+        float SigOn(float inputLevel, int frequency);
         void SigOff();
+        void MeasAC(float inputLevel, float frequency);
+        void MeasDist(float outputPower);
+        void MeasDC();
+        void PotCtrl(); //Figure out inputs for next two
+        void PresCtrl();
 };
 
 #endif
