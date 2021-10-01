@@ -2,7 +2,6 @@
 #include "../include/funcHandler.h"
 #include "../include/nco.h"
 #include "../include/rms.h"
-#include "../include/pot.h"
 #include "../lib/ArduinoJson.h"
 
 #define FS 44100
@@ -20,7 +19,6 @@ void serialHandler(char *inputStream);
 void serialParse(char *inputStream);
 // NCO NCO0(0, 0);
 // NCO NCO1(0, 0);
-POT VolumePot(3, 4, 5);
 
 void setup()
 {
@@ -42,7 +40,6 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler(Buf);
   };
-  VolumePot.set_CCW()
 }
 
 void serialHandler(char *inputStream)
@@ -66,7 +63,8 @@ void serialHandler(char *inputStream)
     dispatch.MeasDC();
   }
   else if (strcmp(command, "PotCtrl") == 0)  {
-    dispatch.PotCtrl();
+    //dispatch.PotCtrl(jsonObj["Params"]["Channel"],
+    //                 jsonObj["Params"]["Control"]);
   }
   else if (strcmp(command, "PresCtrl") == 0)  {
     dispatch.PresCtrl();

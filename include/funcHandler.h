@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "../include/pot.h"
 #ifndef FUNCH_H_INCLUDED
 #define FUNCH_H_INCLUDED
 
@@ -7,6 +8,7 @@ class funcHandler {
         String currentAction;
         u_int32_t timeOn, timeOff;
         bool timeUp;
+        POT VolumePot, TonePot, DrivePot;
         void setup();
     public:
         funcHandler();
@@ -15,7 +17,7 @@ class funcHandler {
         void MeasAC(float inputLevel, float frequency);
         void MeasDist(float outputPower);
         void MeasDC();
-        void PotCtrl(); //Figure out inputs for next two
+        void PotCtrl(char *chan, char *ctrl); //Figure out inputs for next two
         void PresCtrl();
 };
 

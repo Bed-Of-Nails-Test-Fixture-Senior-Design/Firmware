@@ -1,7 +1,7 @@
 #include "../include/funcHandler.h"
 
-funcHandler::funcHandler(){
-
+funcHandler::funcHandler()
+    : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11){
 }
 
 void funcHandler::setup(){
@@ -29,8 +29,22 @@ void funcHandler::MeasDC(){
 
 }
 
-void funcHandler::PotCtrl(){
-
+void funcHandler::PotCtrl(char *chan, char *ctrl){
+    POT *potPtr; 
+    if (strcmp(chan, "Volume") == 0)  {
+        potPtr = &VolumePot;
+    } else if (strcmp(chan, "Tone") == 0)  {
+        potPtr = &TonePot;
+    } else (strcmp(chan, "Drive") == 0)  {
+        potPtr = &DrivePot;
+    }
+    if (strcmp(ctrl, "CCW") == 0)  {
+        potPtr->set_CCW();
+    } else if (strcmp(chan, "MID") == 0)  {
+        potPtr->set_MID();
+    } else if (strcmp(chan, "CW") == 0)  {
+        potPtr->set_CW();
+    }
 }
 
 void funcHandler::PresCtrl(){

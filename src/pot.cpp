@@ -2,10 +2,9 @@
 
 // Writes to digital outputs to control potentiometer relays
 POT::POT(int inCCW, int inMID, int inCW) {	//constructor POT
-    pinMODE(inCCW, OUTPUT);
-    pinMODE(inMID, OUTPUT);
-    PINMODE(inCW, OUTPUT);
-    
+    pinMode(inCCW, OUTPUT);
+    pinMode(inMID, OUTPUT);
+    pinMode(inCW, OUTPUT);
     inCCW = CCW;
     inMID = MID;
     inCW = CW;

@@ -17,6 +17,14 @@
     }
 }
 
+{
+    "Command" : "PotCtrl",
+    "Params" : {
+        "Channel" : "Volume",
+        "Control" : "CCW"
+    }
+}
+
 //OUTPUT EXAMPLES
 {
     "Action" : "Distortion",
