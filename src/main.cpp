@@ -21,6 +21,9 @@ void serialParse(char *inputStream);
 // NCO NCO0(0, 0);
 // NCO NCO1(0, 0);
 POT VolumePot(3, 4, 5);
+POT TonePot(6, 7, 8);
+POT DrivePot(9, 10, 11);
+
 
 void setup()
 {
