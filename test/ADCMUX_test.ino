@@ -1,9 +1,6 @@
 #include <Arduino.h>
 
-//uint32_t  AdcResult[3];
-uint32_t  ADC0_Result;
-uint32_t  ADC1_Result;
-uint32_t  ADC2_Result;
+uint32_t  AdcResult[12];
 
 bool interruptFlag = 0;
 
@@ -20,34 +17,19 @@ void loop(){
 
   while(!interruptFlag)
   {
-    digitalWrite(13, 1);
+    digitalWrite(13, 0);
   }
-//  for(int i = 0; i < 3; i++) {
-//    Serial.print("ADC");
-//    Serial.print(i);
-//    Serial.print(" Result is: ");
-//    Serial.println(AdcResult[i]);
-//    Serial.println("");
-//
-//  }
-//  interruptFlag = 0;
-
-    Serial.print("Digital Result[0]: ");
-    Serial.println(ADC0_Result);
-    Serial.print("Digital Result as Voltage [0]: ");
-    Serial.println(ADC0_Result * 3.3/4096);
-
-    Serial.print("Digital Result[1]: ");
-    Serial.println(ADC1_Result);
-    Serial.print("Digital Result as Voltage [1]: ");
-    Serial.println(ADC1_Result * 3.3/4096);
-
-    Serial.print("Digital Result[2]: ");
-    Serial.println(ADC2_Result);
-    Serial.print("Digital Result as Voltage [2]: ");
-    Serial.println(ADC2_Result * 3.3/4096);
+  for(int i = 0; i < 12; i++) {
+    Serial.print("Digital Result[");
+    Serial.print(i);
+    Serial.print("] = ");
+    Serial.println(AdcResult[i]);
+    Serial.print("As voltage = ");
+    Serial.println(AdcResult[i] * 3.3/4096);
+  }
 
     interruptFlag = 0;
+
 
 }
 
@@ -55,10 +37,21 @@ void loop(){
 void TC3_Handler()
 {
   TC_GetStatus(TC1, 0);
-  ADC0_Result = ADC->ADC_CDR[7]; //read conversion A0
-  ADC1_Result = ADC->ADC_CDR[6]; //read conversion A1
-  ADC2_Result = ADC->ADC_CDR[5]; //read conversion A2
+  digitalWrite(13, 1);
+  AdcResult[0] = ADC->ADC_CDR[7]; //read conversion A0
+  AdcResult[1] = ADC->ADC_CDR[6]; //read conversion A1
+  AdcResult[2] = ADC->ADC_CDR[5]; //read conversion A2
+  AdcResult[3] = ADC->ADC_CDR[4]; //read conversion A3
+  AdcResult[4] = ADC->ADC_CDR[3]; //read conversion A4
+  AdcResult[5] = ADC->ADC_CDR[2]; //read conversion A5
+  AdcResult[6] = ADC->ADC_CDR[1]; //read conversion A6
+  AdcResult[7] = ADC->ADC_CDR[0]; //read conversion A7
+  AdcResult[8] = ADC->ADC_CDR[10]; //read conversion A8
+  AdcResult[9] = ADC->ADC_CDR[11]; //read conversion A9
+  AdcResult[10] = ADC->ADC_CDR[12]; //read conversion A10
+  AdcResult[11] = ADC->ADC_CDR[13]; //read conversion A11
   interruptFlag = 1;
+  
 
   ADC->ADC_CR |= ADC_CR_START;            // Begin the next ADC conversion. 
   
@@ -92,7 +85,7 @@ void AdcSetup(){
   ADC->ADC_CHER |= ADC_CHER_CH12; //Enable Channel 12 (A10 pin) 
   ADC->ADC_CHER |= ADC_CHER_CH13; //Enable Channel 13 (A11 pin)  
   ADC->ADC_MR = 0; 
-  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions
+  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions <- as of 10/1, confirmed that doing 12 conversions at 44.1kHz works at prescal(4)
   ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
   ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
   ADC->ADC_EMR = 0;
