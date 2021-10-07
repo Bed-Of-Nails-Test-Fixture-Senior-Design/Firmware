@@ -1,4 +1,4 @@
-#include "../include/nco.h"
+#include "../include/NCO.h"
 
 NCO::NCO(float freq, float amp){
   this->setFrequency(freq);
@@ -41,5 +41,4 @@ void NCO::startNCO(){
 }
 
 void NCO::stopNCO() {
-  
 }

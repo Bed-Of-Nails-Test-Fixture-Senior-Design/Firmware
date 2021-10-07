@@ -1,35 +1,38 @@
-#include "../include/funcHandler.h"
+#include "../include/FuncHandler.h"
 
-funcHandler::funcHandler()
-    : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11){
+//startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
+
+FuncHandler::FuncHandler()
+    : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11),
+      NCO0(0,0), NCO1(0,0){
+    this->setup();
 }
 
-void funcHandler::setup(){
-
+void FuncHandler::setup(){
 }
 
-void funcHandler::SigOn(float inputLevel, int frequency){
+void FuncHandler::SigOn(float inputLevel, int frequency){
     Serial.println(inputLevel);
     Serial.println(frequency);
 }
 
-void funcHandler::SigOff(){
+void FuncHandler::SigOff(){
 
 }
 
-void funcHandler::MeasAC(float inputLevel, float frequency){
+void FuncHandler::MeasAC(float inputLevel, float frequency){
 
 }
 
-void funcHandler::MeasDist(float outputPower){
+void FuncHandler::MeasDist(float outputPower){
 
 }
 
-void funcHandler::MeasDC(){
+void FuncHandler::MeasDC(){
 
 }
 
-void funcHandler::PotCtrl(char *chan, char *ctrl){
+void FuncHandler::PotCtrl(char *chan, char *ctrl){
     POT *potPtr; 
     if (strcmp(chan, "Volume") == 0)  {
         potPtr = &VolumePot;
@@ -47,6 +50,6 @@ void funcHandler::PotCtrl(char *chan, char *ctrl){
     }
 }
 
-void funcHandler::PresCtrl(){
+void FuncHandler::PresCtrl(){
 
 }

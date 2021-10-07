@@ -1,4 +1,4 @@
-#include "../include/pot.h"
+#include "../include/POT.h"
 
 // Writes to digital outputs to control potentiometer relays
 POT::POT(int inCCW, int inMID, int inCW) {	//constructor POT
