@@ -18,13 +18,11 @@ class FuncHandler {
         void setup();
         void SigOn(float inputLevel, int frequency);
         void SigOff();
-        void MeasAC(float inputLevel, float frequency);
+        float MeasAC(float inputLevel, float frequency);
         void MeasDist(float outputPower);
         void MeasDC();
         void PotCtrl(char *chan, char *ctrl);
         void PresCtrl();
 };
-
-void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
 
 #endif

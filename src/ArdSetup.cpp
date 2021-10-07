@@ -1,5 +1,9 @@
 #include "../include/ArdSetup.h"
 
+int LUT[2048];
+unsigned int cycle;
+int ADCResults;
+
 void ArdSetup(){
     for (int i = 0; i < 2048; i++)
     {
@@ -25,6 +29,7 @@ void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
   uint32_t rc = VARIANT_MCK / 2 / frequency; //2 because we selected TIMER_CLOCK1 above
   TC_SetRA(tc, channel, rc / 2);             //50% high, 50% low
   TC_SetRC(tc, channel, rc);
+  TC_Start(tc, channel);
   tc->TC_CHANNEL[channel].TC_IER = TC_IER_CPCS;
   tc->TC_CHANNEL[channel].TC_IDR = ~TC_IER_CPCS;
   NVIC_EnableIRQ(irq);

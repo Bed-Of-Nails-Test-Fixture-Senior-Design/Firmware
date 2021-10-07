@@ -9,18 +9,18 @@ FuncHandler::FuncHandler()
 }
 
 void FuncHandler::setup(){
+
 }
 
 void FuncHandler::SigOn(float inputLevel, int frequency){
-    Serial.println(inputLevel);
-    Serial.println(frequency);
+    
 }
 
 void FuncHandler::SigOff(){
 
 }
 
-void FuncHandler::MeasAC(float inputLevel, float frequency){
+float FuncHandler::MeasAC(float inputLevel, float frequency){
 
 }
 
@@ -38,7 +38,7 @@ void FuncHandler::PotCtrl(char *chan, char *ctrl){
         potPtr = &VolumePot;
     } else if (strcmp(chan, "Tone") == 0)  {
         potPtr = &TonePot;
-    } else (strcmp(chan, "Drive") == 0)  {
+    } else if (strcmp(chan, "Drive") == 0)  {
         potPtr = &DrivePot;
     }
     if (strcmp(ctrl, "CCW") == 0)  {

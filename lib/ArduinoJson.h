@@ -30,6 +30,7 @@
       || defined(__IAR_SYSTEMS_ICC__) /* IAR Embedded Workbench */ \
       || defined(__XC)                /* MPLAB XC compiler */      \
       || defined(__ARMCC_VERSION)     /* Keil ARM Compiler */      \
+      || defined(__NIOS2__)           /* Altera Nios II EDS */     \
       || defined(__AVR)               /* Atmel AVR8/GNU C Compiler */
 #    define ARDUINOJSON_EMBEDDED_MODE 1
 #  else
@@ -228,10 +229,10 @@
 #define ARDUINOJSON_HEX_DIGIT_1111() F
 #define ARDUINOJSON_HEX_DIGIT_(A, B, C, D) ARDUINOJSON_HEX_DIGIT_##A##B##C##D()
 #define ARDUINOJSON_HEX_DIGIT(A, B, C, D) ARDUINOJSON_HEX_DIGIT_(A, B, C, D)
-#define ARDUINOJSON_VERSION "6.18.4"
+#define ARDUINOJSON_VERSION "6.18.5"
 #define ARDUINOJSON_VERSION_MAJOR 6
 #define ARDUINOJSON_VERSION_MINOR 18
-#define ARDUINOJSON_VERSION_REVISION 4
+#define ARDUINOJSON_VERSION_REVISION 5
 #ifndef ARDUINOJSON_NAMESPACE
 #  define ARDUINOJSON_NAMESPACE                                               \
     ARDUINOJSON_CONCAT4(                                                      \

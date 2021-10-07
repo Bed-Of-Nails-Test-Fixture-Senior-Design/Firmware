@@ -32,13 +32,18 @@
 }
 
 {
+    "Action" : "PotCtrl",
+    "Result" : "Success"
+}
+
+{
     "Action" : "ACAll",
     "Result" : { 
-        "TP0" : {
+        "PreAmpOut" : {
             "Level" : "2.23",
             "Freq"  : "4000"
         },
-        "TP1" : {
+        "GainStageOut" : {
             "Level" : "1.76",
             "Freq"  : "3500"
         },
