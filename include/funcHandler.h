@@ -6,23 +6,26 @@
 #ifndef FUNCH_H_INCLUDED
 #define FUNCH_H_INCLUDED
 
-class FuncHandler {
-    private:
-        String currentAction;
-        u_int32_t timeOn, timeOff;
-        bool timeUp;
-        POT VolumePot, TonePot, DrivePot;
-        NCO NCO0, NCO1;
-    public:
-        FuncHandler();
-        void setup();
-        void SigOn(float inputLevel, int frequency);
-        void SigOff();
-        float MeasAC(float inputLevel, float frequency);
-        void MeasDist(float outputPower);
-        void MeasDC();
-        void PotCtrl(char *chan, char *ctrl);
-        void PresCtrl();
+#define PRESENCE 2
+class FuncHandler
+{
+private:
+    String currentAction;
+    u_int32_t timeOn, timeOff;
+    bool timeUp;
+    POT VolumePot, TonePot, DrivePot;
+    NCO NCO0, NCO1;
+
+public:
+    FuncHandler();
+    void setup();
+    bool SigOn(float inputLevel, int frequency);
+    bool SigOff();
+    float MeasAC(float inputLevel, float frequency);
+    float MeasDist(float outputPower);
+    float MeasDC();
+    bool PotCtrl(const char *chan, const char *ctrl);
+    bool PresCtrl(const char *ctrl);
 };
 
 #endif

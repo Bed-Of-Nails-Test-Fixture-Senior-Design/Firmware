@@ -8,7 +8,6 @@ POT::POT(int inCCW, int inMID, int inCW) {	//constructor POT
     inCCW = CCW;
     inMID = MID;
     inCW = CW;
-    
 }
 
 void POT::set_CW(){

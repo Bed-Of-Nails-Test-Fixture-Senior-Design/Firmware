@@ -1,55 +1,60 @@
 #include "../include/FuncHandler.h"
 
-//startTimer(TC1, 0, TC3_IRQn, FS); //TC1 channel 0, the IRQ for that channel and the desired frequency
-
 FuncHandler::FuncHandler()
-    : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11),
-      NCO0(0,0), NCO1(0,0){
-    this->setup();
+  : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11),
+    NCO0(0,0), NCO1(0,0){
+  this->setup();
 }
 
 void FuncHandler::setup(){
-
+  pinMode(PRESENCE, OUTPUT);
+  digitalWrite(PRESENCE, LOW);
 }
 
-void FuncHandler::SigOn(float inputLevel, int frequency){
-    
+bool FuncHandler::SigOn(float inputLevel, int frequency){
+  return true;
 }
 
-void FuncHandler::SigOff(){
-
+bool FuncHandler::SigOff(){
+  return true;
 }
 
 float FuncHandler::MeasAC(float inputLevel, float frequency){
 
 }
 
-void FuncHandler::MeasDist(float outputPower){
+float FuncHandler::MeasDist(float outputPower){
 
 }
 
-void FuncHandler::MeasDC(){
+float FuncHandler::MeasDC(){
 
 }
 
-void FuncHandler::PotCtrl(char *chan, char *ctrl){
-    // POT *potPtr; 
-    // if (strcmp(chan, "Volume") == 0)  {
-    //     potPtr = &VolumePot;
-    // } else if (strcmp(chan, "Tone") == 0)  {
-    //     potPtr = &TonePot;
-    // } else if (strcmp(chan, "Drive") == 0)  {
-    //     potPtr = &DrivePot;
-    // }
-    // if (strcmp(ctrl, "CCW") == 0)  {
-    //     potPtr->set_CCW();
-    // } else if (strcmp(chan, "MID") == 0)  {
-    //     potPtr->set_MID();
-    // } else if (strcmp(chan, "CW") == 0)  {
-    //     potPtr->set_CW();
-    // }
+bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
+  POT *potPtr; 
+  if (strcmp(chan, "Volume") == 0)  {
+      potPtr = &VolumePot;
+  } else if (strcmp(chan, "Tone") == 0)  {
+      potPtr = &TonePot;
+  } else if (strcmp(chan, "Drive") == 0)  {
+      potPtr = &DrivePot;
+  } else return false;
+  if (strcmp(ctrl, "CCW") == 0)  {
+      //potPtr->set_CCW();          Something is making these functions fail the second time! No input string for command it seems....
+  } else if (strcmp(chan, "MID") == 0)  {
+      //potPtr->set_MID();
+  } else if (strcmp(chan, "CW") == 0)  {
+      //potPtr->set_CW();
+  } else return false;
+  return true;
 }
 
-void FuncHandler::PresCtrl(){
-
+bool FuncHandler::PresCtrl(const char *ctrl){
+  if (strcmp(ctrl, "On") == 0)  {
+    digitalWrite(PRESENCE, HIGH);
+  } else if (strcmp(ctrl, "Off") == 0) {
+    digitalWrite(PRESENCE, LOW);
+  } else return false;
+  return true;
 }
