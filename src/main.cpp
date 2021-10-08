@@ -6,7 +6,7 @@
 char Buf[200];
 String incomingStr;
 const size_t CAPACITY = JSON_OBJECT_SIZE(20);
-StaticJsonDocument<CAPACITY> doc;
+StaticJsonDocument<CAPACITY> doc, rtn;
 JsonObject jsonObj, jsonReturn;
 FuncHandler dispatch;
 
@@ -34,7 +34,6 @@ void loop()
 void serialHandler()
 {
   const char *command = jsonObj["Command"];
-  DynamicJsonDocument rtn(1024);
   if (strcmp(command, "SigOn") == 0)  {
     rtn["Action"] = "SigOn";
     rtn["Result"] = dispatch.SigOn(jsonObj["Params"]["Level"].as<float>(), 
@@ -69,5 +68,6 @@ void serialHandler()
   else  {
     rtn["Action"] = "Invalid";
   }
-  serializeJson(rtn, Serial);
+  jsonReturn = rtn.as<JsonObject>();
+  serializeJson(jsonReturn, Serial);
 }

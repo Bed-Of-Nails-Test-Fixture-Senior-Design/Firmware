@@ -41,11 +41,11 @@ bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
       potPtr = &DrivePot;
   } else return false;
   if (strcmp(ctrl, "CCW") == 0)  {
-      //potPtr->set_CCW();          Something is making these functions fail the second time! No input string for command it seems....
-  } else if (strcmp(chan, "MID") == 0)  {
-      //potPtr->set_MID();
-  } else if (strcmp(chan, "CW") == 0)  {
-      //potPtr->set_CW();
+      potPtr->set_CCW();
+  } else if (strcmp(ctrl, "MID") == 0)  {
+      potPtr->set_MID();
+  } else if (strcmp(ctrl, "CW") == 0)  {
+      potPtr->set_CW();
   } else return false;
   return true;
 }

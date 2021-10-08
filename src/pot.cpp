@@ -5,9 +5,9 @@ POT::POT(int inCCW, int inMID, int inCW) {	//constructor POT
     pinMode(inCCW, OUTPUT);
     pinMode(inMID, OUTPUT);
     pinMode(inCW, OUTPUT);
-    inCCW = CCW;
-    inMID = MID;
-    inCW = CW;
+    CCW = inCCW;
+    MID = inMID;
+    CW = inCW;
 }
 
 void POT::set_CW(){
