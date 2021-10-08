@@ -11,11 +11,18 @@ void FuncHandler::setup(){
   digitalWrite(PRESENCE, LOW);
 }
 
-bool FuncHandler::SigOn(float inputLevel, int frequency){
+bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency){ //should we consider having some sort of active check before enabling?
+  if (strcmp(chan, "Guitar") == 0)  {
+    DACC->DACC_MR = DACC_MR_USER_SEL_CHANNEL0;
+    DACC->DACC_CHER =  DACC_CHER_CH0;
+  } else if (strcmp(chan, "Aux") == 0)  {
+    DACC->DACC_MR = DACC_MR_USER_SEL_CHANNEL1;
+    DACC->DACC_CHER =  DACC_CHER_CH1;
+  } else return false;
   return true;
 }
 
-bool FuncHandler::SigOff(){
+bool FuncHandler::SigOff(const char *chan){
   return true;
 }
 

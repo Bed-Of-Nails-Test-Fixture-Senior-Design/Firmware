@@ -18,7 +18,7 @@ void TC3_Handler()
   ADCResults = ADC->ADC_CDR[0];
   ADC->ADC_CR |= ADC_CR_START;
   DACC->DACC_CDR = LUT[cycle]; // Start the next DAC conversion
-  cycle = (cycle == 2048) ? 0 : cycle++; // frequency is determined by FS * cycle_increment / 2048
+  cycle = (cycle == 2047) ? 0 : cycle++; // frequency is determined by FS * cycle_increment / 2048
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)

@@ -19,8 +19,8 @@ private:
 public:
     FuncHandler();
     void setup();
-    bool SigOn(float inputLevel, int frequency);
-    bool SigOff();
+    bool SigOn(const char *chan, float inputLevel, int frequency);
+    bool SigOff(const char *chan);
     float MeasAC(float inputLevel, float frequency);
     float MeasDist(float outputPower);
     float MeasDC();
