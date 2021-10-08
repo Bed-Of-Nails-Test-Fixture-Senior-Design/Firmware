@@ -33,21 +33,21 @@ void FuncHandler::MeasDC(){
 }
 
 void FuncHandler::PotCtrl(char *chan, char *ctrl){
-    POT *potPtr; 
-    if (strcmp(chan, "Volume") == 0)  {
-        potPtr = &VolumePot;
-    } else if (strcmp(chan, "Tone") == 0)  {
-        potPtr = &TonePot;
-    } else if (strcmp(chan, "Drive") == 0)  {
-        potPtr = &DrivePot;
-    }
-    if (strcmp(ctrl, "CCW") == 0)  {
-        potPtr->set_CCW();
-    } else if (strcmp(chan, "MID") == 0)  {
-        potPtr->set_MID();
-    } else if (strcmp(chan, "CW") == 0)  {
-        potPtr->set_CW();
-    }
+    // POT *potPtr; 
+    // if (strcmp(chan, "Volume") == 0)  {
+    //     potPtr = &VolumePot;
+    // } else if (strcmp(chan, "Tone") == 0)  {
+    //     potPtr = &TonePot;
+    // } else if (strcmp(chan, "Drive") == 0)  {
+    //     potPtr = &DrivePot;
+    // }
+    // if (strcmp(ctrl, "CCW") == 0)  {
+    //     potPtr->set_CCW();
+    // } else if (strcmp(chan, "MID") == 0)  {
+    //     potPtr->set_MID();
+    // } else if (strcmp(chan, "CW") == 0)  {
+    //     potPtr->set_CW();
+    // }
 }
 
 void FuncHandler::PresCtrl(){
