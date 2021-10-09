@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "../include/POT.h"
-#include "../include/NCO.h"
 #include "../include/RMS.h"
+#include "../include/ArdSetup.h"
 
 #ifndef FUNCH_H_INCLUDED
 #define FUNCH_H_INCLUDED
@@ -14,13 +14,12 @@ private:
     u_int32_t timeOn, timeOff;
     bool timeUp;
     POT VolumePot, TonePot, DrivePot;
-    NCO NCO0, NCO1;
 
 public:
     FuncHandler();
     void setup();
     bool SigOn(const char *chan, float inputLevel, int frequency);
-    bool SigOff(const char *chan);
+    bool SigOff();
     float MeasAC(float inputLevel, float frequency);
     float MeasDist(float outputPower);
     float MeasDC();

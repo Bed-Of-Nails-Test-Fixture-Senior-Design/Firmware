@@ -8,5 +8,10 @@
 void ArdSetup();
 void TC3_Handler();
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
+void DAC_Setup();
+void ADC_Setup();
+
+void UpdateNCOAmp(float amp);
+void UpdateNCOFreq(int freq);
 
 #endif

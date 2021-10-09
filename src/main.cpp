@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include "../include/FuncHandler.h"
-#include "../include/ArdSetup.h"
 #include "../lib/ArduinoJson.h"
 
 char Buf[200];
@@ -15,8 +14,7 @@ void serialHandler();
 void setup()
 {
   Serial.begin(9600);
-  ArdSetup();
-  timerSetup(TC1, 0, TC3_IRQn, FS);
+  dispatch.setup();
 }
 
 void loop()
@@ -42,7 +40,7 @@ void serialHandler()
   }
   else if (strcmp(command, "SigOff") == 0)  {
     rtn["Action"] = "SigOff";
-    rtn["Result"] = dispatch.SigOff(jsonObj["Params"]["Channel"]);
+    rtn["Result"] = dispatch.SigOff();
   }
   else if (strcmp(command, "MeasAC") == 0)  {
     rtn["Action"] = "MeasAC";

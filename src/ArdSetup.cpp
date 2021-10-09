@@ -3,13 +3,12 @@
 int LUT[2048];
 unsigned int cycle;
 int ADCResults;
+int FreqInc;
 
 void ArdSetup(){
-    for (int i = 0; i < 2048; i++)
-    {
-        LUT[i] = (2047 * sin(2 * PI * i / 2048) + 2048); // build lookup table for our digitally created sine wave
-    }
-    cycle = 0;
+  cycle = 0;
+  UpdateNCOFreq(1);
+  UpdateNCOAmp(0);
 }
 
 void TC3_Handler()
@@ -18,7 +17,7 @@ void TC3_Handler()
   ADCResults = ADC->ADC_CDR[0];
   ADC->ADC_CR |= ADC_CR_START;
   DACC->DACC_CDR = LUT[cycle]; // Start the next DAC conversion
-  cycle = (cycle == 2047) ? 0 : cycle++; // frequency is determined by FS * cycle_increment / 2048
+  cycle = (cycle >= 2047) ? 0 : cycle + FreqInc; // frequency is determined by FS * cycle_increment / 2048
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -33,4 +32,48 @@ void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
   tc->TC_CHANNEL[channel].TC_IER = TC_IER_CPCS;
   tc->TC_CHANNEL[channel].TC_IDR = ~TC_IER_CPCS;
   NVIC_EnableIRQ(irq);
+}
+
+void DAC_Setup() {
+  PIOB->PIO_PDR |= PIO_PDR_P15 | PIO_PDR_P16;  // Disable GPIO on corresponding pins DAC0 and DAC1
+  PMC->PMC_PCER1 |= PMC_PCER1_PID38;     // DACC power ON
+  DACC->DACC_CR = DACC_CR_SWRST;         // reset DACC
+  DACC->DACC_MR = DACC_MR_REFRESH (1)
+                  | DACC_MR_STARTUP_0
+                  | DACC_MR_MAXS;
+}
+
+void ADC_Setup(){ 
+  ADC->ADC_WPMR &= ~(ADC_WPMR_WPEN); //Disable the Write Protect Mode   
+  ADC->ADC_MR = 0; 
+  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions <- as of 10/1, confirmed that doing 12 conversions at 44.1kHz works at prescal(4)
+  ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
+  ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
+  ADC->ADC_EMR = 0;
+  ADC->ADC_CHER |= ADC_CHER_CH7; //Enable Channel 7 (A0 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH6; //Enable Channel 6 (A1 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH5; //Enable Channel 5 (A2 pin)
+  ADC->ADC_CHER |= ADC_CHER_CH4; //Enable Channel 4 (A3 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH3; //Enable Channel 3 (A4 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH2; //Enable Channel 2 (A5 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH1; //Enable Channel 1 (A6 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH0; //Enable Channel 0 (A7 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH10; //Enable Channel 10 (A8 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH11; //Enable Channel 11 (A9 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH12; //Enable Channel 12 (A10 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH13; //Enable Channel 13 (A11 pin)
+}
+
+void UpdateNCOAmp(float amp){
+  //LUT scaling calculation here
+  amp = (amp) ? amp : 1;  //cannot divide by zero
+  for (int i = 0; i < 2048; i++)
+    {
+        LUT[i] = (int)((2047 * sin(2 * PI * i / 2048) + 2048)/amp); // build lookup table for our digitally created sine wave
+    }
+}
+
+void UpdateNCOFreq(int freq){
+  //Frequency increment calculation here
+  FreqInc = freq;
 }
