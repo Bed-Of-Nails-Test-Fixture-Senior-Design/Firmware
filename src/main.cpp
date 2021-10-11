@@ -69,4 +69,6 @@ void serialHandler()
   }
   jsonReturn = rtn.as<JsonObject>();
   serializeJson(jsonReturn, Serial);
+  Serial.println();
+  rtn.clear();
 }

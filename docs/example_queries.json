@@ -1,3 +1,39 @@
+{"Command":"SigOn","Params":{"Channel":"Guitar","Level":0.2,"Freq":1000}}
+
+{"Command":"SigOff"}
+
+{"Command":"PresCtrl","Params":{"Control":"On"}}
+
+{"Command":"PresCtrl","Params":{"Control":"Off"}}
+
+{"Command":"PotCtrl","Params":{"Channel":"Volume","Control":"CCW"}}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //INPUT EXAMPLES
 {
     "Command" : "SigOn",
@@ -5,23 +41,6 @@
         "Channel" : "Guitar",
         "Level" : 2.2,
         "Freq"  : 1000
-    }
-}
-
-{"Command":"SigOn","Params":{"Channel":"Guitar","Level":2.4,"Freq":1000}}
-
-{
-    "Command" : "PresCtrl",
-    "Params" : {
-        "Control" : "On"
-    }
-}
-
-{
-    "Command" : "PotCtrl",
-    "Params" : {
-        "Channel" : "Volume",
-        "Control" : "CCW"
     }
 }
 

@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "../include/POT.h"
-#include "../include/dsp.h"
+//#include "../include/dsp.h"
 #include "../include/ardSetup.h"
 
 #ifndef FUNCH_H_INCLUDED
