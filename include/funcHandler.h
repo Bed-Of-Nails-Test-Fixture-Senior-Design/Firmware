@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "../include/POT.h"
-#include "../include/RMS.h"
-#include "../include/ArdSetup.h"
+#include "../include/dsp.h"
+#include "../include/ardSetup.h"
 
 #ifndef FUNCH_H_INCLUDED
 #define FUNCH_H_INCLUDED

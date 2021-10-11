@@ -1,4 +1,4 @@
-#include "../include/ArdSetup.h"
+#include "../include/ardSetup.h"
 
 int LUT[2048];
 unsigned int cycle;

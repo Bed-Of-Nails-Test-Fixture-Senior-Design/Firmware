@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "../include/FuncHandler.h"
+#include "../include/funcHandler.h"
 #include "../lib/ArduinoJson.h"
 
 char Buf[200];
