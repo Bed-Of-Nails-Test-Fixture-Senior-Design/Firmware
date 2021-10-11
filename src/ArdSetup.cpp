@@ -66,8 +66,9 @@ void ADC_Setup(){
 
 void UpdateNCOAmp(float amp){
   //LUT scaling calculation here
-  float scalingFactor = amp / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 1.375V amplitude, the scaling factor will be 0.5 which is half
-  scalingFactor = (scalingFactor) ? scalingFactor : 1;  //cannot divide by zero
+
+  amp = (amp >= 0 && amp <= 0.2) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
+  float scalingFactor = (amp*11 + 0.55) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)
     {
         LUT[i] = (int)((2047 * sin(2 * PI * i / 2048) + 2048)*scalingFactor); // build lookup table for our digitally created sine wave
