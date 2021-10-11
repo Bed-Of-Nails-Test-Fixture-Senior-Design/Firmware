@@ -8,7 +8,7 @@ int FreqInc;
 void ArdSetup(){
   cycle = 0;
   UpdateNCOFreq(25); // start at lowest frequency where the increment is 1
-  UpdateNCOAmp(0);
+  UpdateNCOAmp(0.2); //start at amplitude = 2.75V (200mv RMS) 
 }
 
 void TC3_Handler()
