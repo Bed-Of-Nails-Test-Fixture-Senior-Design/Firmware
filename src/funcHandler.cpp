@@ -11,27 +11,39 @@ void FuncHandler::setup(){
     timerSetup(TC1, 0, TC3_IRQn, FS);
     pinMode(PRESENCE, OUTPUT);
     digitalWrite(PRESENCE, LOW);
+    VolumePot.set_CCW();
+    TonePot.set_CCW();
+    DrivePot.set_CCW();
 }
 
 bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency){ //should we consider having some sort of active check before enabling?
     UpdateNCOAmp(inputLevel);
-    UpdateNCOFreq(frequency);
+    int freqCast = UpdateNCOFreq(frequency);
+    // dacc_get_interrupt_status(DACC_INTERFACE);
+    // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
     if (strcmp(chan, "Aux") == 0)  {
-        DACC->DACC_MR = DACC_MR_USER_SEL_CHANNEL0;
-        DACC->DACC_CHER = DACC_CHDR_CH1;              // disable DAC channel 1
-        DACC->DACC_CHER =  DACC_CHER_CH0;            // enable DAC channel 0
+        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13);
+        channel_flag = 0;
+        // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
     } else if (strcmp(chan, "Guitar") == 0)  {
-        DACC->DACC_MR = DACC_MR_USER_SEL_CHANNEL1;
-        DACC->DACC_CHER = DACC_CHDR_CH0;             // disable DAC channel 0
-        DACC->DACC_CHER =  DACC_CHER_CH1;            // enable DAC channel 1
+        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
+        channel_flag = 1;
+        // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
+        // DACC->DACC_CDR = DAC_IDLE;
+        // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
+        // DACC->DACC_MR |= DACC_MR_USER_SEL_CHANNEL1;
     } else return false;
     return true;
 }
 
 bool FuncHandler::SigOff(){
-    UpdateNCOFreq(0);
-    DACC->DACC_CHER = DACC_CHDR_CH0;
-    DACC->DACC_CHER = DACC_CHDR_CH1;
+    int freqCast = UpdateNCOFreq(0);
+    DACC->DACC_MR |= DACC_MR_USER_SEL_CHANNEL1;
+    DACC->DACC_CDR = DAC_IDLE;
+    while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
+    DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
+    DACC->DACC_CDR = DAC_IDLE;
+    while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
     return true;
 }
 
@@ -39,11 +51,15 @@ float FuncHandler::MeasAC(float inputLevel, float frequency){
 
 }
 
+float FuncHandler::MeasDC(){
+
+}
+
 float FuncHandler::MeasDist(float outputPower){
 
 }
 
-float FuncHandler::MeasDC(){
+float FuncHandler::MeasNoise(){
 
 }
 

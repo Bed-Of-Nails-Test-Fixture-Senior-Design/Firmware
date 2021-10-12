@@ -21,8 +21,9 @@ public:
     bool SigOn(const char *chan, float inputLevel, int frequency);
     bool SigOff();
     float MeasAC(float inputLevel, float frequency);
-    float MeasDist(float outputPower);
     float MeasDC();
+    float MeasDist(float outputPower);
+    float MeasNoise();
     bool PotCtrl(const char *chan, const char *ctrl);
     bool PresCtrl(const char *ctrl);
 };

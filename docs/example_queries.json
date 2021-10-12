@@ -8,32 +8,6 @@
 
 {"Command":"PotCtrl","Params":{"Channel":"Volume","Control":"CCW"}}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //INPUT EXAMPLES
 {
     "Command" : "SigOn",

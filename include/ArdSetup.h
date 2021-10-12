@@ -4,6 +4,9 @@
 #define ARDSETUP_H_INCLUDED
 
 #define FS 44100          // Sample rate
+#define DAC_IDLE 1024
+
+extern int channel_flag;
 
 void ArdSetup();
 void TC3_Handler();
@@ -12,6 +15,6 @@ void DAC_Setup();
 void ADC_Setup();
 
 void UpdateNCOAmp(float amp);
-void UpdateNCOFreq(int freq);
+int UpdateNCOFreq(int freq);
 
 #endif
