@@ -16,18 +16,18 @@ void FuncHandler::setup(){
     DrivePot.set_CCW();
 }
 
-bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency){ //should we consider having some sort of active check before enabling?
+bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency){
     UpdateNCOAmp(inputLevel);
     int freqCast = UpdateNCOFreq(frequency);
     // dacc_get_interrupt_status(DACC_INTERFACE);
     // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
     if (strcmp(chan, "Aux") == 0)  {
-        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13);
         channel_flag = 0;
+        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13); //conversions from a previous cycle might push to DAC after channel switch
         // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
     } else if (strcmp(chan, "Guitar") == 0)  {
-        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
         channel_flag = 1;
+        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
         // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
         // DACC->DACC_CDR = DAC_IDLE;
         // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
@@ -38,12 +38,8 @@ bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency){ //sh
 
 bool FuncHandler::SigOff(){
     int freqCast = UpdateNCOFreq(0);
-    DACC->DACC_MR |= DACC_MR_USER_SEL_CHANNEL1;
-    DACC->DACC_CDR = DAC_IDLE;
-    while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
-    DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
-    DACC->DACC_CDR = DAC_IDLE;
-    while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
+    DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
+    DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13);
     return true;
 }
 
