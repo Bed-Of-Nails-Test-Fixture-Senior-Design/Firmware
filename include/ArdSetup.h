@@ -4,10 +4,9 @@
 #define ARDSETUP_H_INCLUDED
 
 #define FS 44100          // Sample rate
-#define DAC_IDLE 1247     // 1.22V
-#define DACC0_DATA(dac0) ((0xffff & dac0) | (0x1u << 13))
-#define DACC1_DATA(dac1) ((0xffff & dac1) | (0x1u << 12))
-#define DACC_WORD_DATA(dac0, dac1) (DACC0_DATA(dac0) | (DACC1_DATA(dac1) << 16))
+#define DAC_IDLE 1248     // 1.22V
+#define DAC1_SHIFT 13
+#define DAC0_SHIFT 12
 
 extern int channel_flag;
 

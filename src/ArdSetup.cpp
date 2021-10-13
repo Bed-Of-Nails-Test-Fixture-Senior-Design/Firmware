@@ -7,12 +7,11 @@ int FreqInc, channel_flag;
 
 void ArdSetup(){
   cycle = 0;
+  channel_flag = 0;
   UpdateNCOFreq(0);
-  UpdateNCOAmp(0);
-  DACC->DACC_CDR = DACC_WORD_DATA(DAC_IDLE, DAC_IDLE);  //Set both outputs to 1.22V to prevent transient
-  // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
-  // DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_Shift);
-  // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
+  UpdateNCOAmp(0.102);
+  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
+  while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
 }
 
 void TC3_Handler()
@@ -20,8 +19,7 @@ void TC3_Handler()
   TC_GetStatus(TC1, 0);        // accept interrupt
   ADCResults = ADC->ADC_CDR[0];
   ADC->ADC_CR |= ADC_CR_START;
-  // DACC->DACC_CDR = (DAC_PUT & LUT[cycle]) | (0x1u << ((channel_flag) ? 13 : 12));
-  // DACC->DACC_CDR = LUT[cycle]; // Start the next DAC conversion
+  DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC1_SHIFT : DAC0_SHIFT));
   cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
 }
 
@@ -46,7 +44,6 @@ void DAC_Setup() {
   DACC->DACC_MR = DACC_MR_REFRESH (1)
                   | DACC_MR_STARTUP_0
                   | DACC_MR_MAXS
-                  | DACC_MR_WORD
                   | DACC_MR_TAG;
   DACC->DACC_CHER |= DACC_CHER_CH0 | DACC_CHER_CH1;  // enable DAC channels 0 and 1
 }
