@@ -8,7 +8,11 @@ int FreqInc, channel_flag;
 void ArdSetup(){
   cycle = 0;
   UpdateNCOFreq(0);
-  UpdateNCOAmp(0.2); //What amplitude should we start at? The voltage bias is 1.22V... 
+  UpdateNCOAmp(0);
+  DACC->DACC_CDR = DACC_WORD_DATA(DAC_IDLE, DAC_IDLE);  //Set both outputs to 1.22V to prevent transient
+  // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
+  // DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_Shift);
+  // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
 }
 
 void TC3_Handler()
@@ -16,9 +20,9 @@ void TC3_Handler()
   TC_GetStatus(TC1, 0);        // accept interrupt
   ADCResults = ADC->ADC_CDR[0];
   ADC->ADC_CR |= ADC_CR_START;
-  DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? 13 : 12));
+  // DACC->DACC_CDR = (DAC_PUT & LUT[cycle]) | (0x1u << ((channel_flag) ? 13 : 12));
   // DACC->DACC_CDR = LUT[cycle]; // Start the next DAC conversion
-  cycle = (cycle >= 2047) ? 0 : (cycle + FreqInc); // frequency is determined by FS * cycle_increment / 2048
+  cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -42,6 +46,7 @@ void DAC_Setup() {
   DACC->DACC_MR = DACC_MR_REFRESH (1)
                   | DACC_MR_STARTUP_0
                   | DACC_MR_MAXS
+                  | DACC_MR_WORD
                   | DACC_MR_TAG;
   DACC->DACC_CHER |= DACC_CHER_CH0 | DACC_CHER_CH1;  // enable DAC channels 0 and 1
 }
@@ -68,7 +73,7 @@ void ADC_Setup(){
 }
 
 void UpdateNCOAmp(float amp){
-  amp = (amp >= 0 && amp <= 0.2) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
+  amp = (0.2 >= amp >= 0) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
   float scalingFactor = (amp*11 + 0.55) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)
     {

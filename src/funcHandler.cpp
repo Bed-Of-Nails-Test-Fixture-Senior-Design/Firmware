@@ -5,9 +5,9 @@ FuncHandler::FuncHandler()
 }
 
 void FuncHandler::setup(){
-    ArdSetup();
     DAC_Setup();
     ADC_Setup();
+    ArdSetup();
     timerSetup(TC1, 0, TC3_IRQn, FS);
     pinMode(PRESENCE, OUTPUT);
     digitalWrite(PRESENCE, LOW);
@@ -43,7 +43,7 @@ bool FuncHandler::SigOff(){
     return true;
 }
 
-float FuncHandler::MeasAC(float inputLevel, float frequency){
+float FuncHandler::MeasAC(){
 
 }
 
@@ -52,10 +52,6 @@ float FuncHandler::MeasDC(){
 }
 
 float FuncHandler::MeasDist(float outputPower){
-
-}
-
-float FuncHandler::MeasNoise(){
 
 }
 
