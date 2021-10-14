@@ -13,6 +13,10 @@ void serialHandler();
 
 void setup()
 {
+  pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  digitalWrite(13, LOW);
+  digitalWrite(12, LOW);
   Serial.begin(9600);
   dispatch.setup();
 }
@@ -27,16 +31,20 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler();
   };
+  digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3fu) ? HIGH : LOW));
 }
 
 void serialHandler()
 {
   const char *command = jsonObj["Command"];
   if (strcmp(command, "SigOn") == 0)  {
+    int cast;
     rtn["Action"] = "SigOn";
     rtn["Result"] = dispatch.SigOn(jsonObj["Params"]["Channel"],
                                    jsonObj["Params"]["Level"].as<float>(), 
-                                   jsonObj["Params"]["Freq"].as<int>());
+                                   jsonObj["Params"]["Freq"].as<int>(),
+                                   &cast);
+    rtn["Cast"] = cast;
   }
   else if (strcmp(command, "SigOff") == 0)  {
     rtn["Action"] = "SigOff";

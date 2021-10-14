@@ -1,26 +1,33 @@
 #include "../include/ardSetup.h"
 
 int LUT[2048];
+uint32_t ADCResult[12];
 unsigned int cycle;
-int ADCResults;
 int FreqInc, channel_flag;
+uint32_t tool;
+
 
 void ArdSetup(){
   cycle = 0;
   channel_flag = 0;
   UpdateNCOFreq(0);
   UpdateNCOAmp(0.102);
-  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
-  while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
+  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);          //set DAC1 to 1.22V
+  while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait for DAC1 to set
 }
 
 void TC3_Handler()
 {
+  digitalWrite(13, HIGH);
   TC_GetStatus(TC1, 0);        // accept interrupt
-  ADCResults = ADC->ADC_CDR[0];
+  for (int i=0;i<=5;i++){
+    ADCResult[i] = ADC->ADC_CDR[i];
+  }
   ADC->ADC_CR |= ADC_CR_START;
   DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC1_SHIFT : DAC0_SHIFT));
   cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
+  // digitalWrite(12, LOW);
+  digitalWrite(13, LOW);
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -55,21 +62,22 @@ void ADC_Setup(){
   ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
   ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
   ADC->ADC_EMR = 0;
-  ADC->ADC_CHER |= ADC_CHER_CH7; //Enable Channel 7 (A0 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH6; //Enable Channel 6 (A1 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH5; //Enable Channel 5 (A2 pin)
-  ADC->ADC_CHER |= ADC_CHER_CH4; //Enable Channel 4 (A3 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH3; //Enable Channel 3 (A4 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH2; //Enable Channel 2 (A5 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH1; //Enable Channel 1 (A6 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH0; //Enable Channel 0 (A7 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH10; //Enable Channel 10 (A8 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH11; //Enable Channel 11 (A9 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH12; //Enable Channel 12 (A10 pin) 
-  ADC->ADC_CHER |= ADC_CHER_CH13; //Enable Channel 13 (A11 pin)
+  ADC->ADC_CHER |= ADC_CHER_CH0 | ADC_CHER_CH1 | ADC_CHER_CH2 | ADC_CHER_CH3| ADC_CHER_CH4 | ADC_CHER_CH5;
+  // ADC->ADC_CHER |= ADC_CHER_CH7   //Enable Channel 7 (A0 pin) 
+  //               | ADC_CHER_CH6  //Enable Channel 6 (A1 pin)
+  //               | ADC_CHER_CH5  //Enable Channel 5 (A2 pin)
+  //               | ADC_CHER_CH4  //Enable Channel 4 (A3 pin)
+  //               | ADC_CHER_CH3  //Enable Channel 3 (A4 pin)
+  //               | ADC_CHER_CH2  //Enable Channel 2 (A5 pin)
+  //               | ADC_CHER_CH1  //Enable Channel 1 (A6 pin)
+  //               | ADC_CHER_CH0  //Enable Channel 0 (A7 pin)
+                // | ADC_CHER_CH10 //Enable Channel 10 (A8 pin)
+                // | ADC_CHER_CH11 //Enable Channel 11 (A9 pin)
+                // | ADC_CHER_CH12 //Enable Channel 12 (A10 pin)
+                // | ADC_CHER_CH13; //Enable Channel 13 (A11 pin) 
 }
 
-void UpdateNCOAmp(float amp){
+void UpdateNCOAmp(float amp){ //TODO NEED TO FIX CAST
   amp = (0.2 >= amp >= 0) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
   float scalingFactor = (amp*11 + 0.55) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)

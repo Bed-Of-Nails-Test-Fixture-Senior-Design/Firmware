@@ -16,11 +16,9 @@ void FuncHandler::setup(){
     DrivePot.set_CCW();
 }
 
-bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency){
+bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, int *freqCast){
     UpdateNCOAmp(inputLevel);
-    int freqCast = UpdateNCOFreq(frequency);
-    // dacc_get_interrupt_status(DACC_INTERFACE);
-    // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
+    *freqCast = UpdateNCOFreq(frequency);
     if (strcmp(chan, "Aux") == 0)  {
         channel_flag = 0;
         DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
