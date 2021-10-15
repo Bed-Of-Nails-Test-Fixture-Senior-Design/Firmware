@@ -47,7 +47,7 @@ void serialHandler()
                                    jsonObj["Params"]["Level"].as<float>(), 
                                    jsonObj["Params"]["Freq"].as<int>(),
                                    &cast);
-    rtn["Cast"] = cast;
+    rtn["Result"]["FreqCast"] = cast;
   }
   else if (strcmp(command, "SigOff") == 0)  {
     rtn["Action"] = "SigOff";
