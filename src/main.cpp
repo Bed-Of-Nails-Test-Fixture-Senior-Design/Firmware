@@ -31,9 +31,9 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler();
   };
-  if (ch_count == 44100) {
+  /*if (ch_count == 44100) {
     Serial.println(ADCResult[0]);
-  }
+  }*/
   digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
 }
 
@@ -43,7 +43,7 @@ void serialHandler()
   if (strcmp(command, "SigOn") == 0)  {
     int cast;
     rtn["Action"] = "SigOn";
-    rtn["Result"] = dispatch.SigOn(jsonObj["Params"]["Channel"],
+    rtn["Result"]["Success"] = dispatch.SigOn(jsonObj["Params"]["Channel"],
                                    jsonObj["Params"]["Level"].as<float>(), 
                                    jsonObj["Params"]["Freq"].as<int>(),
                                    &cast);
@@ -51,28 +51,28 @@ void serialHandler()
   }
   else if (strcmp(command, "SigOff") == 0)  {
     rtn["Action"] = "SigOff";
-    rtn["Result"] = dispatch.SigOff();
+    rtn["Result"]["Success"] = dispatch.SigOff();
   }
   else if (strcmp(command, "MeasAC") == 0)  {
     rtn["Action"] = "MeasAC";
-    rtn["Result"] = dispatch.MeasAC();
+    rtn["Result"]["Success"] = dispatch.MeasAC();
   }
   else if (strcmp(command, "MeasDist") == 0)  {
     rtn["Action"] = "MeasDist";
-    rtn["Result"] = dispatch.MeasDist(jsonObj["Params"]["Power"].as<float>());
+    rtn["Result"]["Success"] = dispatch.MeasDist(jsonObj["Params"]["Power"].as<float>());
   }
   else if (strcmp(command, "MeasDC") == 0)  {
     rtn["Action"] = "MeasDC";
-    rtn["Result"] = dispatch.MeasDC();
+    rtn["Result"]["Success"] = dispatch.MeasDC();
   }
   else if (strcmp(command, "PotCtrl") == 0)  {
     rtn["Action"] = "PotCtrl";
-    rtn["Result"] = dispatch.PotCtrl(jsonObj["Params"]["Channel"],
+    rtn["Result"]["Success"] = dispatch.PotCtrl(jsonObj["Params"]["Channel"],
                                      jsonObj["Params"]["Control"]);
   }
   else if (strcmp(command, "PresCtrl") == 0)  {
     rtn["Action"] = "PresCtrl";
-    rtn["Result"] = dispatch.PresCtrl(jsonObj["Params"]["Control"]);
+    rtn["Result"]["Success"] = dispatch.PresCtrl(jsonObj["Params"]["Control"]);
   }
   else  {
     rtn["Action"] = "Invalid";
