@@ -31,7 +31,10 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler();
   };
-  digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3fu) ? HIGH : LOW));
+  if (ch_count == 44100) {
+    Serial.println(ADCResult[0]);
+  }
+  digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
 }
 
 void serialHandler()

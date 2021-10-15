@@ -5,14 +5,16 @@ uint32_t ADCResult[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
 uint32_t tool;
+int ch_count;
 
 
 void ArdSetup(){
   cycle = 0;
   channel_flag = 0;
+  ch_count = 0;
   UpdateNCOFreq(0);
   UpdateNCOAmp(0.102);
-  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);          //set DAC1 to 1.22V
+  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //set DAC1 to 1.22V
   while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait for DAC1 to set
 }
 
@@ -20,14 +22,18 @@ void TC3_Handler()
 {
   digitalWrite(13, HIGH);
   TC_GetStatus(TC1, 0);        // accept interrupt
-  for (int i=0;i<=5;i++){
+  for (int i=0;i<=7;i++){
     ADCResult[i] = ADC->ADC_CDR[i];
   }
+  for (int i=10;i<=13;i++){
+    ADCResult[i] = ADC->ADC_CDR[i];
+  }
+  digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
   ADC->ADC_CR |= ADC_CR_START;
-  DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC1_SHIFT : DAC0_SHIFT));
+  DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC2_SHIFT : DAC1_SHIFT));
   cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
-  // digitalWrite(12, LOW);
   digitalWrite(13, LOW);
+  ch_count = (ch_count + 1) % 44101;
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -58,23 +64,22 @@ void DAC_Setup() {
 void ADC_Setup(){ 
   ADC->ADC_WPMR &= ~(ADC_WPMR_WPEN); //Disable the Write Protect Mode   
   ADC->ADC_MR = 0; 
-  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions <- as of 10/1, confirmed that doing 12 conversions at 44.1kHz works at prescal(4)
+  ADC->ADC_MR = ADC_MR_PRESCAL(0);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions <- as of 10/1, confirmed that doing 12 conversions at 44.1kHz works at prescal(4)
   ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
   ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
   ADC->ADC_EMR = 0;
-  ADC->ADC_CHER |= ADC_CHER_CH0 | ADC_CHER_CH1 | ADC_CHER_CH2 | ADC_CHER_CH3| ADC_CHER_CH4 | ADC_CHER_CH5;
-  // ADC->ADC_CHER |= ADC_CHER_CH7   //Enable Channel 7 (A0 pin) 
-  //               | ADC_CHER_CH6  //Enable Channel 6 (A1 pin)
-  //               | ADC_CHER_CH5  //Enable Channel 5 (A2 pin)
-  //               | ADC_CHER_CH4  //Enable Channel 4 (A3 pin)
-  //               | ADC_CHER_CH3  //Enable Channel 3 (A4 pin)
-  //               | ADC_CHER_CH2  //Enable Channel 2 (A5 pin)
-  //               | ADC_CHER_CH1  //Enable Channel 1 (A6 pin)
-  //               | ADC_CHER_CH0  //Enable Channel 0 (A7 pin)
-                // | ADC_CHER_CH10 //Enable Channel 10 (A8 pin)
-                // | ADC_CHER_CH11 //Enable Channel 11 (A9 pin)
-                // | ADC_CHER_CH12 //Enable Channel 12 (A10 pin)
-                // | ADC_CHER_CH13; //Enable Channel 13 (A11 pin) 
+  ADC->ADC_CHER |= ADC_CHER_CH7   //Enable Channel 7 (A0 pin) 
+                | ADC_CHER_CH6  //Enable Channel 6 (A1 pin)
+                | ADC_CHER_CH5  //Enable Channel 5 (A2 pin)
+                | ADC_CHER_CH4  //Enable Channel 4 (A3 pin)
+                | ADC_CHER_CH3  //Enable Channel 3 (A4 pin)
+                | ADC_CHER_CH2  //Enable Channel 2 (A5 pin)
+                | ADC_CHER_CH1  //Enable Channel 1 (A6 pin)
+                | ADC_CHER_CH0  //Enable Channel 0 (A7 pin)
+                | ADC_CHER_CH10 //Enable Channel 10 (A8 pin)
+                | ADC_CHER_CH11 //Enable Channel 11 (A9 pin)
+                | ADC_CHER_CH12 //Enable Channel 12 (A10 pin)
+                | ADC_CHER_CH13; //Enable Channel 13 (A11 pin) 
 }
 
 void UpdateNCOAmp(float amp){ //TODO NEED TO FIX CAST

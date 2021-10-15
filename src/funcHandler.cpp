@@ -21,13 +21,13 @@ bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, int *
     *freqCast = UpdateNCOFreq(frequency);
     if (strcmp(chan, "Aux") == 0)  {
         channel_flag = 0;
-        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
+        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
         while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
         //DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13); //conversions from a previous cycle might push to DAC after channel switch
         // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
     } else if (strcmp(chan, "Guitar") == 0)  {
         channel_flag = 1;
-        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC0_SHIFT);
+        DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
         while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
         // DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
         // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
@@ -40,8 +40,8 @@ bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, int *
 
 bool FuncHandler::SigOff(){
     int freqCast = UpdateNCOFreq(0);
-    DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
-    DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13);
+    DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
+    DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
     return true;
 }
 
