@@ -59,7 +59,7 @@ void serialHandler()
   }
   else if (strcmp(command, "MeasDist") == 0)  {
     rtn["Action"] = "MeasDist";
-    rtn["Result"] = dispatch.MeasDist(jsonObj["Params"]["Level"].as<float>());
+    rtn["Result"] = dispatch.MeasDist(jsonObj["Params"]["Power"].as<float>());
   }
   else if (strcmp(command, "MeasDC") == 0)  {
     rtn["Action"] = "MeasDC";
