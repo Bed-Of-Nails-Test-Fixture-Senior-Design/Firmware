@@ -45,16 +45,16 @@ bool FuncHandler::SigOff(){
     return true;
 }
 
-float FuncHandler::MeasAC(){
-
+bool FuncHandler::MeasAC(){
+    return true;
 }
 
-float FuncHandler::MeasDC(){
-
+bool FuncHandler::MeasDC(){
+    return true;
 }
 
-float FuncHandler::MeasDist(float outputPower){
-
+bool FuncHandler::MeasDist(float outputPower){
+    return true;
 }
 
 bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
