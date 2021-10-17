@@ -65,6 +65,10 @@ void serialHandler()
     rtn["Action"] = "MeasDC";
     rtn["Result"]["Success"] = dispatch.MeasDC();
   }
+  else if (strcmp(command, "MeasNoise") == 0)  {
+    rtn["Action"] = "MeasAC";
+    rtn["Result"]["Success"] = dispatch.MeasAC();
+  }
   else if (strcmp(command, "PotCtrl") == 0)  {
     rtn["Action"] = "PotCtrl";
     rtn["Result"]["Success"] = dispatch.PotCtrl(jsonObj["Params"]["Channel"],
