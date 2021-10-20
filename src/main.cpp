@@ -13,10 +13,6 @@ void serialHandler();
 
 void setup()
 {
-  pinMode(13, OUTPUT);
-  pinMode(12, OUTPUT);
-  digitalWrite(13, LOW);
-  digitalWrite(12, LOW);
   Serial.begin(9600);
   dispatch.setup();
 }
@@ -31,10 +27,6 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler();
   };
-  if (ch_count == 44100) {
-    Serial.println(ADCResult[0]);
-  }
-  digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
 }
 
 void serialHandler()

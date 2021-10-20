@@ -4,14 +4,11 @@ int LUT[2048];
 uint32_t ADCResult[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
-uint32_t tool;
-int ch_count;
 
 
 void ArdSetup(){
   cycle = 0;
   channel_flag = 0;
-  ch_count = 0;
   UpdateNCOFreq(0);
   UpdateNCOAmp(0.102);
   DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //set DAC1 to 1.22V
@@ -20,20 +17,16 @@ void ArdSetup(){
 
 void TC3_Handler()
 {
-  digitalWrite(13, HIGH);
   TC_GetStatus(TC1, 0);        // accept interrupt
-  for (int i=0;i<=7;i++){
-    ADCResult[i] = ADC->ADC_CDR[i];
-  }
-  for (int i=10;i<=13;i++){
-    ADCResult[i] = ADC->ADC_CDR[i];
-  }
-  digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
-  ADC->ADC_CR |= ADC_CR_START;
+  // for (int i=0;i<=7;i++){
+  //   ADCResult[i] = ADC->ADC_CDR[i];
+  // }
+  // for (int i=10;i<=13;i++){
+  //   ADCResult[i] = ADC->ADC_CDR[i];
+  // }
+  //ADC->ADC_CR |= ADC_CR_START;
   DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC2_SHIFT : DAC1_SHIFT));
   cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
-  digitalWrite(13, LOW);
-  ch_count = (ch_count + 1) % 44101;
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -54,7 +47,7 @@ void DAC_Setup() {
   PIOB->PIO_PDR |= PIO_PDR_P15 | PIO_PDR_P16;  // Disable GPIO on corresponding pins DAC0 and DAC1
   PMC->PMC_PCER1 |= PMC_PCER1_PID38;     // DACC power ON
   DACC->DACC_CR = DACC_CR_SWRST;         // reset DACC
-  DACC->DACC_MR = DACC_MR_REFRESH (1)
+  DACC->DACC_MR = DACC_MR_REFRESH (0)
                   | DACC_MR_STARTUP_0
                   | DACC_MR_MAXS
                   | DACC_MR_TAG;
@@ -64,7 +57,7 @@ void DAC_Setup() {
 void ADC_Setup(){ 
   ADC->ADC_WPMR &= ~(ADC_WPMR_WPEN); //Disable the Write Protect Mode   
   ADC->ADC_MR = 0; 
-  ADC->ADC_MR = ADC_MR_PRESCAL(0);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions <- as of 10/1, confirmed that doing 12 conversions at 44.1kHz works at prescal(4)
+  ADC->ADC_MR = ADC_MR_PRESCAL(4);    //ADC Clock set to 8MHz <- might need to change this when doing the 12 conversions <- as of 10/1, confirmed that doing 12 conversions at 44.1kHz works at prescal(4)
   ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
   ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
   ADC->ADC_EMR = 0;
