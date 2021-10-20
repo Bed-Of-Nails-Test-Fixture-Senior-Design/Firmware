@@ -1,3 +1,4 @@
+//COMPACT EXAMPLES
 {"Command":"SigOn","Params":{"Channel":"Guitar","Level":0.2,"Freq":1000}}
 
 {"Command":"SigOff"}
@@ -8,98 +9,173 @@
 
 {"Command":"PotCtrl","Params":{"Channel":"Volume","Control":"CCW"}}
 
-
 //INPUT EXAMPLES
 {
-    "Command" : "SigOn",
-    "Params" : {
-        "Channel" : "Guitar",
-        "Level" : 2.2,
-        "Freq"  : 1000
+    "Command": "SigOn",
+    "Params": {
+        "Channel": "Guitar",
+        "Level": 2.2,
+        "Freq": 1000
     }
 }
 
 {
-    "Command" : "MeasDist",
-    "Params" : {
-        "Level" : 2.2
+    "Command": "SigOff"
+}
+
+{
+    "Command": "MeasDist",
+    "Params": {
+        "Power": 2.2
     }
 }
 
 {
-    "Command":"PotCtrl",
-    "Params":{
-        "Channel":"Volume",
-        "Control":"CCW"
+    "Command": "PotCtrl",
+    "Params": {
+        "Channel": "Volume",
+        "Control": "CCW"
     }
 }
 
 {
-    "Command":"PresCtrl",
-    "Params":{
-        "Control":"Off"}}
-
+    "Command": "PresCtrl",
+    "Params": {
+        "Control": "Off"
+    }
+}
 //OUTPUT EXAMPLES
 {
-    "Action" : "Distortion",
-    "Result" : "20%"
+    "Action": "SigOn",
+    "Result": {
+        "Success": true,
+        "FreqCast": 1000
+    }
 }
 
 {
-    "Action" : "PotCtrl",
-    "Result" : "Success"
+    "Action": "SigOff",
+    "Result": {
+        "Success": true
+    }
 }
 
 {
-    "Action" : "ACAll",
-    "Result" : { 
-        "PreAmpOut" : {
-            "Level" : "2.23",
-            "Freq"  : "4000"
+    "Action": "MeasAC",
+    "Result": {
+        "Success": true,
+        "PreAmpOut": {
+            "Level": "2.23",
+            "Freq": "4000"
         },
-        "GainStageOut" : {
-            "Level" : "1.76",
-            "Freq"  : "3500"
+        "GainStageOut": {
+            "Level": "1.76",
+            "Freq": "3500"
         },
-        "TP2" : {
-            "Level" : "2.23",
-            "Freq"  : "4000"
+        "EmitBypOut": {
+            "Level": "2.23",
+            "Freq": "4000"
         },
-        "TP3" : {
-            "Level" : "1.76",
-            "Freq"  : "3500"
+        "EmitFlloOut": {
+            "Level": "1.76",
+            "Freq": "3500"
         },
-        "TP4" : {
-            "Level" : "2.23",
-            "Freq"  : "4000"
+        "SrcFlloOut": {
+            "Level": "2.23",
+            "Freq": "4000"
         },
-        "TP5" : {
-            "Level" : "1.76",
-            "Freq"  : "3500"
+        "12VOut": {
+            "Level": "1.76",
+            "Freq": "3500"
         },
-        "TP6" : {
-            "Level" : "2.23",
-            "Freq"  : "4000"
+        "8VOut": {
+            "Level": "2.23",
+            "Freq": "4000"
         },
-        "TP7" : {
-            "Level" : "1.76",
-            "Freq"  : "3500"
+        "6VOut": {
+            "Level": "1.76",
+            "Freq": "3500"
         },
-        "TP8" : {
-            "Level" : "2.23",
-            "Freq"  : "4000"
+        "NegDrvOut": {
+            "Level": "2.23",
+            "Freq": "4000"
         },
-        "TP9" : {
-            "Level" : "1.76",
-            "Freq"  : "3500"
+        "PosDrvOut": {
+            "Level": "1.76",
+            "Freq": "3500"
         },
-        "TP10" : {
-            "Level" : "2.23",
-            "Freq"  : "4000"
+        "SPRKPos": {
+            "Level": "2.23",
+            "Freq": "4000"
         },
-        "TP11" : {
-            "Level" : "1.76",
-            "Freq"  : "3500"
+        "SPRKNeg": {
+            "Level": "1.76",
+            "Freq": "3500"
         }
+    }
+}
+
+{
+    "Action": "MeasDC",
+    "Result": {
+        "Success": true,
+        "PreAmpOut": {
+            "Level": "2.23"
+        },
+        "GainStageOut": {
+            "Level": "1.76"
+        },
+        "EmitBypOut": {
+            "Level": "2.23"
+        },
+        "EmitFlloOut": {
+            "Level": "1.76"
+        },
+        "SrcFlloOut": {
+            "Level": "2.23"
+        },
+        "12VOut": {
+            "Level": "1.76"
+        },
+        "8VOut": {
+            "Level": "2.23"
+        },
+        "6VOut": {
+            "Level": "1.76"
+        },
+        "NegDrvOut": {
+            "Level": "2.23"
+        },
+        "PosDrvOut": {
+            "Level": "1.76"
+        },
+        "SPRKPos": {
+            "Level": "2.23"
+        },
+        "SPRKNeg": {
+            "Level": "1.76"
+        }
+    }
+}
+
+{
+    "Action": "MeasDist",
+    "Result": {
+        "Success": true,
+        "THD": 80
+    }
+}
+
+{
+    "Action": "PotCtrl",
+    "Result": {
+        "Success": true
+    }
+}
+
+{
+    "Action": "PresCtrl",
+    "Result": {
+        "Success": true
     }
 }

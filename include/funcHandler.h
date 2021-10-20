@@ -20,9 +20,9 @@ public:
     void setup();
     bool SigOn(const char *chan, float inputLevel, int frequency, int *freqCast);
     bool SigOff();
-    float MeasAC();
-    float MeasDC();
-    float MeasDist(float outputPower);
+    bool MeasAC();
+    bool MeasDC();
+    bool MeasDist(float outputPower);
     bool PotCtrl(const char *chan, const char *ctrl);
     bool PresCtrl(const char *ctrl);
 };
