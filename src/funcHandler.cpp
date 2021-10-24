@@ -1,5 +1,15 @@
 #include "../include/FuncHandler.h"
 
+// #define CONVERT9(value)  (2.744*3.3*(value)/4096)
+// #define CONVERT12(value) (3.758*3.3*(value)/4096)
+
+//create struct for channels
+#define CONVERT(value)  (3.3*(value)/4096)
+float scale_Table[12][2] = {{2.744,0},{2.744,0},{2.744,0},{3.758,0},
+                            {2.744,0},{2.744,0},{3.758,0},{3.758,0},
+                            {3.758,0},{3.758,0},{3.758,0},{3.758,0}};
+
+
 FuncHandler::FuncHandler()
   : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11){
 }
@@ -54,7 +64,8 @@ bool FuncHandler::MeasDC(float (&results)[12]){
         ADC_Set(set);           //should probably reset static registers when this happens
         while (millis()<=stopTime);
         for (int i = 6*(set-1); i <= (6*(set-1)+5); i++) {     //might be able to remove this. if adc results go away after reading I don't think you can.
-            results[i] = ADCResult[i];
+            // results[i] = CONVERT(ADCResult[i])*scale_Table[i][0];
+            results[i] = CONVERT(ADCResult[i]);
         }
     }
     ADC_Set(0);

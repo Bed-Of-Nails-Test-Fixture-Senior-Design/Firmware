@@ -8,9 +8,9 @@ const size_t CAPACITY = JSON_OBJECT_SIZE(50);
 StaticJsonDocument<CAPACITY> doc, rtn;
 JsonObject jsonObj, jsonReturn;
 FuncHandler dispatch;
-String channels[12] = {"PreAmpOut", "GainStageOut", "EmitBypOut", 
-                       "EmitFlloOut", "SrcFlloOut", "12VOut", "8VOut", "6VOut", 
-                       "NegDrvOut", "PosDrvOut", "SPRKPos", "SPRKNeg"};
+String channels[12] = {"PreAmpOut", "6VOut", "EmitFlloOut", "SrcFlloOut", "GainStageOut", 
+                       "EmitBypOut", "12VOut", "8VOut", "PosDrvOut", "NegDrvOut",
+                        "SPRKPos", "SPRKNeg"};
 
 void serialHandler();
 
@@ -81,7 +81,7 @@ void serialHandler()
     rtn["Result"]["Success"] = dispatch.MeasDC(results);
     for (int i = 0; i <= 11; i++)
     {
-      rtn["Result"][channels[i]]["Level"] = results[i];
+      rtn["Result"][channels[i]]["Level"] = roundf(results[i] * 1000)/1000;
     }
   }
   else if (strcmp(command, "PotCtrl") == 0)
