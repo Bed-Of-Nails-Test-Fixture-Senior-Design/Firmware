@@ -22,7 +22,7 @@ public:
     bool SigOn(const char *chan, float inputLevel, int frequency, int *freqCast);
     bool SigOff();
     bool MeasAC(float (&results)[24]);
-    bool MeasDC(uint32_t (&results)[12]);
+    bool MeasDC(float (&results)[12]);
     bool MeasDist(float outputPower);
     bool PotCtrl(const char *chan, const char *ctrl);
     bool PresCtrl(const char *ctrl);

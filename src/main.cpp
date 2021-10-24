@@ -76,7 +76,7 @@ void serialHandler()
   }
   else if (strcmp(command, "MeasDC") == 0)
   {
-    uint32_t results[12];
+    float results[12];
     rtn["Action"] = "MeasDC";
     rtn["Result"]["Success"] = dispatch.MeasDC(results);
     for (int i = 0; i <= 11; i++)

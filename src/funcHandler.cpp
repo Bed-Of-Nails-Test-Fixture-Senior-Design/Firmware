@@ -47,7 +47,7 @@ bool FuncHandler::MeasAC(float (&results)[24]){
     return true;
 }
 
-bool FuncHandler::MeasDC(uint32_t (&results)[12]){
+bool FuncHandler::MeasDC(float (&results)[12]){
     unsigned long stopTime;
     for (int set = 1; set <= 2; set++){
         stopTime = millis() + MEASURE_TIME;
