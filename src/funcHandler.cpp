@@ -23,37 +23,46 @@ bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, int *
         channel_flag = 0;
         DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
         while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
-        //DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13); //conversions from a previous cycle might push to DAC after channel switch
-        // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
     } else if (strcmp(chan, "Guitar") == 0)  {
         channel_flag = 1;
         DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
         while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
-        // DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
-        // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
-        // DACC->DACC_CDR = DAC_IDLE;
-        // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
-        // DACC->DACC_MR |= DACC_MR_USER_SEL_CHANNEL1;
     } else return false;
     return true;
 }
 
 bool FuncHandler::SigOff(){
-    int freqCast = UpdateNCOFreq(0);
+    UpdateNCOFreq(0);
     DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
     DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
     return true;
 }
 
-bool FuncHandler::MeasAC(){
+bool FuncHandler::MeasAC(float (&results)[24]){
+    for (int i = 0; i <= 11; i++)
+    {
+      results[i] = 1.2;
+      results[i+1] = 4000;
+    }
     return true;
 }
 
-bool FuncHandler::MeasDC(){
+bool FuncHandler::MeasDC(uint32_t (&results)[12]){
+    unsigned long stopTime;
+    for (int set = 1; set <= 2; set++){
+        stopTime = millis() + MEASURE_TIME;
+        ADC_Set(set);           //should probably reset static registers when this happens
+        while (millis()<=stopTime);
+        for (int i = 6*(set-1); i <= (6*(set-1)+5); i++) {     //might be able to remove this. if adc results go away after reading I don't think you can.
+            results[i] = ADCResult[i];
+        }
+    }
+    ADC_Set(0);
     return true;
 }
 
 bool FuncHandler::MeasDist(float outputPower){
+    //demodulator structure, stretch goal
     return true;
 }
 

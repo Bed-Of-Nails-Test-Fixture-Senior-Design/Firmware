@@ -17,6 +17,9 @@ void TC3_Handler();
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
 void DAC_Setup();
 void ADC_Setup();
+void ADC_Set(int set);
+
+void LP_Filter(uint32_t *statR, uint32_t pos);
 
 void UpdateNCOAmp(float amp);
 int UpdateNCOFreq(int freq);

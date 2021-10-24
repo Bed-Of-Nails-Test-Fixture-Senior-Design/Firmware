@@ -5,6 +5,8 @@ uint32_t ADCResult[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
 
+int chan[12] = {7,6,5,4,3,2,1,0,10,11,12,13};
+// uint8_t chan[12] = {A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 
 void ArdSetup(){
   cycle = 0;
@@ -17,16 +19,25 @@ void ArdSetup(){
 
 void TC3_Handler()
 {
+  // digitalWrite(13, HIGH);
   TC_GetStatus(TC1, 0);        // accept interrupt
-  // for (int i=0;i<=7;i++){
-  //   ADCResult[i] = ADC->ADC_CDR[i];
-  // }
-  // for (int i=10;i<=13;i++){
-  //   ADCResult[i] = ADC->ADC_CDR[i];
-  // }
-  //ADC->ADC_CR |= ADC_CR_START;
+  for (int i=0; i<=11; i++) {
+    // ulChannel = g_APinDescription[chan[i]].ulADCChannelNumber;
+    // if ((adc_get_channel_status(ADC, ulChannel) != 1)) {
+    //   LP_Filter(&ADCResult[i], chan[i]);
+    if (ADC->ADC_CHSR & (0x1u << chan[i])){
+      LP_Filter(&ADCResult[i], chan[i]);
+    }
+  }
+  // digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
+  ADC->ADC_CR |= ADC_CR_START;
   DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC2_SHIFT : DAC1_SHIFT));
   cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
+  // digitalWrite(13, LOW);
+}
+
+void LP_Filter(uint32_t *statR, uint32_t pos){
+  *statR = ADC->ADC_CDR[pos];
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -61,18 +72,22 @@ void ADC_Setup(){
   ADC->ADC_MR |= ADC_MR_TRACKTIM(3); 
   ADC->ADC_MR |= ADC_MR_STARTUP_SUT8; 
   ADC->ADC_EMR = 0;
-  ADC->ADC_CHER |= ADC_CHER_CH7   //Enable Channel 7 (A0 pin) 
-                | ADC_CHER_CH6  //Enable Channel 6 (A1 pin)
-                | ADC_CHER_CH5  //Enable Channel 5 (A2 pin)
-                | ADC_CHER_CH4  //Enable Channel 4 (A3 pin)
-                | ADC_CHER_CH3  //Enable Channel 3 (A4 pin)
-                | ADC_CHER_CH2  //Enable Channel 2 (A5 pin)
-                | ADC_CHER_CH1  //Enable Channel 1 (A6 pin)
-                | ADC_CHER_CH0  //Enable Channel 0 (A7 pin)
-                | ADC_CHER_CH10 //Enable Channel 10 (A8 pin)
-                | ADC_CHER_CH11 //Enable Channel 11 (A9 pin)
-                | ADC_CHER_CH12 //Enable Channel 12 (A10 pin)
-                | ADC_CHER_CH13; //Enable Channel 13 (A11 pin) 
+}
+
+void ADC_Set(int set){
+  switch (set){
+    case 1:
+      ADC->ADC_CHDR = 0x3c03u; //Disable A6->A11
+      ADC->ADC_CHER = 0x00fcu; //Enable A0->A5
+      break;
+    case 2:
+      ADC->ADC_CHDR = 0x00fcu; //Disable A0->A5
+      ADC->ADC_CHER = 0x3c03u; //Enable A6->A11
+      break;
+    default:
+      ADC->ADC_CHDR = 0x00fcu; //Disable A0->A5
+      ADC->ADC_CHDR = 0x3c03u; //Disable A6->A11
+  }
 }
 
 void UpdateNCOAmp(float amp){ //TODO NEED TO FIX CAST
