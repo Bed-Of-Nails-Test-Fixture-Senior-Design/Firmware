@@ -6,7 +6,6 @@ unsigned int cycle;
 int FreqInc, channel_flag;
 
 int chan[12] = {7,6,5,4,3,2,1,0,10,11,12,13};
-// uint8_t chan[12] = {A0,A1,A2,A3,A4,A5,A6,A7,A8,A9,A10,A11};
 
 void ArdSetup(){
   cycle = 0;
@@ -22,9 +21,6 @@ void TC3_Handler()
   // digitalWrite(13, HIGH);
   TC_GetStatus(TC1, 0);        // accept interrupt
   for (int i=0; i<=11; i++) {
-    // ulChannel = g_APinDescription[chan[i]].ulADCChannelNumber;
-    // if ((adc_get_channel_status(ADC, ulChannel) != 1)) {
-    //   LP_Filter(&ADCResult[i], chan[i]);
     if (ADC->ADC_CHSR & (0x1u << chan[i])){
       LP_Filter(&ADCResult[i], chan[i]);
     }
