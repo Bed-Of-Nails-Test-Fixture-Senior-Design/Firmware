@@ -4,8 +4,21 @@ int LUT[2048];
 uint32_t ADCResult[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
-
-int chan[12] = {7,6,5,4,3,2,1,0,10,11,12,13};
+adcChannel channels[12] = {
+    //Name, adcNum, slope, offset
+    {"PreAmpOut", 7, 2.703, 0},
+    {"6VOut", 6, 2.71, 0},
+    {"EmitFlloOut", 5, 2.703, 0},
+    {"SrcFlloOut", 4, 3.676, 0},
+    {"GainStageOut", 3, 2.71, 0},
+    {"EmitBypOut", 2, 2.71, 0},
+    {"12VOut", 1, 3.704, 0},
+    {"8VOut", 0, 3.704, 0},
+    {"PosDrvOut", 10, 3.704, 0},
+    {"NegDrvOut", 11, 3.704, 0},
+    {"SPRKPos", 12, 3.704, 0},
+    {"SPRKNeg", 13, 3.717, 0}
+};
 
 void ArdSetup(){
   cycle = 0;
@@ -14,6 +27,10 @@ void ArdSetup(){
   UpdateNCOAmp(0.102);
   DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //set DAC1 to 1.22V
   while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait for DAC1 to set
+  // pinMode(13, OUTPUT);
+  // pinMode(12, OUTPUT);
+  // digitalWrite(13, LOW);
+  // digitalWrite(12, LOW);
 }
 
 void TC3_Handler()
@@ -21,8 +38,18 @@ void TC3_Handler()
   // digitalWrite(13, HIGH);
   TC_GetStatus(TC1, 0);        // accept interrupt
   for (int i=0; i<=11; i++) {
-    if (ADC->ADC_CHSR & (0x1u << chan[i])){
-      LP_Filter(&ADCResult[i], chan[i]);
+    if (ADC->ADC_CHSR & (0x1u << channels[i].adcNum)){
+      switch (interruptState) {
+        case DCState:
+          DSPFuncs::LPF(&ADCResult[i], channels[i].adcNum);
+          break;
+        case ACState:
+          DSPFuncs::RMS(&ADCResult[i], channels[i].adcNum);
+          break;
+        default:
+          // Function call did not set the state correctly
+          break;
+      }
     }
   }
   // digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
@@ -30,10 +57,6 @@ void TC3_Handler()
   DACC->DACC_CDR = DACC_CDR_DATA(LUT[cycle]) | (0x1u << ((channel_flag) ? DAC2_SHIFT : DAC1_SHIFT));
   cycle = (cycle + FreqInc) % 2048; // frequency is determined by FS * cycle_increment / 2048
   // digitalWrite(13, LOW);
-}
-
-void LP_Filter(uint32_t *statR, uint32_t pos){
-  *statR = ADC->ADC_CDR[pos];
 }
 
 void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency)
@@ -86,8 +109,14 @@ void ADC_Set(int set){
   }
 }
 
+void Reset_ADCResult(){
+  for (int i = 0; i <= 11; i++) {
+    ADCResult[i] = 0;
+  }
+}
+
 void UpdateNCOAmp(float amp){ //TODO NEED TO FIX CAST
-  amp = (0.2 >= amp >= 0) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
+  amp = (amp <= (0.2-amp)) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
   float scalingFactor = (amp*13.31) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)
     {

@@ -1,15 +1,16 @@
 #include <Arduino.h>
-#ifndef ADCDSP_H_INCLUDED
-#define ADCDSP_H_INCLUDED
+#ifndef ADCDSP_H
+#define ADCDSP_H
 
-struct vari{
+enum adcState {DCState, ACState, IdleState};
+extern adcState interruptState;
 
-};
+// struct vari{
+// };
 
-namespace DSP {
-    void RMS(){
-
-    }
+namespace DSPFuncs {
+    void RMS(uint32_t *statR, uint32_t pos);
+    void LPF(uint32_t *statR, uint32_t pos);
 }
 
 #endif

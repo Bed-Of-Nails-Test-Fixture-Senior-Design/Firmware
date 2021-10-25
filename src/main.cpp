@@ -8,18 +8,11 @@ const size_t CAPACITY = JSON_OBJECT_SIZE(50);
 StaticJsonDocument<CAPACITY> doc, rtn;
 JsonObject jsonObj, jsonReturn;
 FuncHandler dispatch;
-String channels[12] = {"PreAmpOut", "6VOut", "EmitFlloOut", "SrcFlloOut", "GainStageOut", 
-                       "EmitBypOut", "12VOut", "8VOut", "PosDrvOut", "NegDrvOut",
-                        "SPRKPos", "SPRKNeg"};
 
 void serialHandler();
 
 void setup()
 {
-  // pinMode(13, OUTPUT);
-  // pinMode(12, OUTPUT);
-  // digitalWrite(13, LOW);
-  // digitalWrite(12, LOW);
   Serial.begin(9600);
   dispatch.setup();
 }
@@ -34,10 +27,6 @@ void loop()
     jsonObj = doc.as<JsonObject>();
     serialHandler();
   };
-  // if (ch_count == 44100) {
-  //   Serial.println(ADCResult[0]);
-  // }
-  // digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
 }
 
 void serialHandler()
@@ -60,13 +49,13 @@ void serialHandler()
   }
   else if (strcmp(command, "MeasAC") == 0 || strcmp(command, "MeasNoise") == 0)
   {
-    float results[24];
+    result results[12];
     rtn["Action"] = "MeasAC";
-    rtn["Result"]["Success"] = dispatch.MeasAC(results);
+    rtn["Result"]["Success"] = dispatch.Measure(results, ACState);
     for (int i = 0; i <= 11; i++)
     {
-      rtn["Result"][channels[i]]["Level"] = results[i];
-      rtn["Result"][channels[i]]["Freq"] = results[i+1];
+      rtn["Result"][channels[i].name]["Level"] = results[i].Level;
+      rtn["Result"][channels[i].name]["Freq"] = results[i].Freq;
     }
   }
   else if (strcmp(command, "MeasDist") == 0)
@@ -76,12 +65,12 @@ void serialHandler()
   }
   else if (strcmp(command, "MeasDC") == 0)
   {
-    float results[12];
+    result results[12];
     rtn["Action"] = "MeasDC";
-    rtn["Result"]["Success"] = dispatch.MeasDC(results);
+    rtn["Result"]["Success"] = dispatch.Measure(results, DCState);
     for (int i = 0; i <= 11; i++)
     {
-      rtn["Result"][channels[i]]["Level"] = roundf(results[i] * 1000)/1000;
+      rtn["Result"][channels[i].name]["Level"] = roundf(results[i].Level * 1000)/1000;
     }
   }
   else if (strcmp(command, "PotCtrl") == 0)

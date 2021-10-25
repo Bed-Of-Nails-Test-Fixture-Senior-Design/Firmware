@@ -1,14 +1,6 @@
 #include "../include/FuncHandler.h"
 
-// #define CONVERT9(value)  (2.744*3.3*(value)/4096)
-// #define CONVERT12(value) (3.758*3.3*(value)/4096)
-
-//create struct for channels
 #define CONVERT(value)  (3.3*(value)/4096)
-float scale_Table[12][2] = {{2.744,0},{2.744,0},{2.744,0},{3.758,0},
-                            {2.744,0},{2.744,0},{3.758,0},{3.758,0},
-                            {3.758,0},{3.758,0},{3.758,0},{3.758,0}};
-
 
 FuncHandler::FuncHandler()
   : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11){
@@ -48,35 +40,39 @@ bool FuncHandler::SigOff(){
     return true;
 }
 
-bool FuncHandler::MeasAC(float (&results)[24]){
-    for (int i = 0; i <= 11; i++)
-    {
-      results[i] = 1.2;
-      results[i+1] = 4000;
-    }
-    return true;
-}
-
-bool FuncHandler::MeasDC(float (&results)[12]){
+bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
+    interruptState = state;
     for (int set = 1; set <= 2; set++){
         stopTime = millis() + MEASURE_TIME;
-        ADC_Set(set);           //should probably reset static registers when this happens
+        ADC_Set(set);
         while (millis()<=stopTime);
-        for (int i = 6*(set-1); i <= (6*(set-1)+5); i++) {     //might be able to remove this. if adc results go away after reading I don't think you can.
-            // results[i] = CONVERT(ADCResult[i])*scale_Table[i][0];
-            results[i] = CONVERT(ADCResult[i]);
+        for (int i = 6*(set-1); i <= (6*(set-1)+5); i++) {
+            results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
+            if (state == ACState) results[i].Freq = 4000;   //TODO need to figure out if frequency is necessary/possible
         }
     }
     ADC_Set(0);
+    interruptState = IdleState;
+    Reset_ADCResult();          //Reset Static Registers
     return true;
 }
 
+/**
+ * Measure Distortion --- Stretch Goal
+ */
 bool FuncHandler::MeasDist(float outputPower){
-    //demodulator structure, stretch goal
     return true;
 }
 
+/**
+ * Control the 3 different potentiometer emulators
+ *
+ * @param[in] chan Which pot to control/change state
+ * @param[in] ctrl 'CCW', 'CW' or 'MID' to determine pot state
+ * @return Whether or not the function was executed successfully,
+ *      invalid channel or control parameters will return false.
+ */
 bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
     POT *potPtr; 
     if (strcmp(chan, "Volume") == 0)  {
@@ -96,6 +92,13 @@ bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
     return true;
 }
 
+/**
+ * Control the Presence Switch
+ *
+ * @param[in] ctrl 'On' or 'Off' to determine presence state
+ * @return Whether or not the function was executed successfully,
+ *      invalid control parameter will return false.
+ */
 bool FuncHandler::PresCtrl(const char *ctrl){
     if (strcmp(ctrl, "On") == 0)  {
         digitalWrite(PRESENCE, HIGH);
