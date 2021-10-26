@@ -1,5 +1,7 @@
 #include "../include/FuncHandler.h"
 
+#define CONVERT(value)  (3.3*(value)/4096)
+
 FuncHandler::FuncHandler()
   : VolumePot(3, 4, 5), TonePot(6, 7, 8), DrivePot(9, 10, 11){
 }
@@ -23,40 +25,57 @@ bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, int *
         channel_flag = 0;
         DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
         while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
-        //DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 13); //conversions from a previous cycle might push to DAC after channel switch
-        // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
     } else if (strcmp(chan, "Guitar") == 0)  {
         channel_flag = 1;
         DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
         while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);
-        // DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << 12);
-        // DACC->DACC_MR &= DACC_MR_USER_SEL_CHANNEL0;
-        // DACC->DACC_CDR = DAC_IDLE;
-        // while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait until last conversion is complete
-        // DACC->DACC_MR |= DACC_MR_USER_SEL_CHANNEL1;
     } else return false;
     return true;
 }
 
 bool FuncHandler::SigOff(){
-    int freqCast = UpdateNCOFreq(0);
+    UpdateNCOFreq(0);
     DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
     DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC1_SHIFT);
     return true;
 }
 
-float FuncHandler::MeasAC(){
+#define numOfSets 2 //must divide evenly into 12
 
+bool FuncHandler::Measure(result (&results)[12], adcState state){
+    unsigned long stopTime;
+    int setInc = 12/numOfSets;
+    interruptState = state;
+    for (int set=0; set <= 11; set += setInc){
+        stopTime = millis() + MEASURE_TIME;
+        ADC_Start(set, (set-1)+setInc);
+        while (millis()<=stopTime);
+        for (int i = set; i < (set+setInc); i++) {
+            results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
+            if (state == ACState) results[i].Freq = 4000;   //TODO need to figure out if frequency is necessary/possible
+        }
+    }
+    ADC_Start(0, -1);
+    interruptState = IdleState;
+    Reset_ADCResult();          //Reset Static Registers
+    return true;
 }
 
-float FuncHandler::MeasDC(){
-
+/**
+ * Measure Distortion --- Stretch Goal
+ */
+bool FuncHandler::MeasDist(float outputPower){
+    return true;
 }
 
-float FuncHandler::MeasDist(float outputPower){
-
-}
-
+/**
+ * Control the 3 different potentiometer emulators
+ *
+ * @param[in] chan Which pot to control/change state
+ * @param[in] ctrl 'CCW', 'CW' or 'MID' to determine pot state
+ * @return Whether or not the function was executed successfully,
+ *      invalid channel or control parameters will return false.
+ */
 bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
     POT *potPtr; 
     if (strcmp(chan, "Volume") == 0)  {
@@ -76,6 +95,13 @@ bool FuncHandler::PotCtrl(const char *chan, const char *ctrl){
     return true;
 }
 
+/**
+ * Control the Presence Switch
+ *
+ * @param[in] ctrl 'On' or 'Off' to determine presence state
+ * @return Whether or not the function was executed successfully,
+ *      invalid control parameter will return false.
+ */
 bool FuncHandler::PresCtrl(const char *ctrl){
     if (strcmp(ctrl, "On") == 0)  {
         digitalWrite(PRESENCE, HIGH);

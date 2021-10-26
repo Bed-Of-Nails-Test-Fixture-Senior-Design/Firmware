@@ -1,15 +1,18 @@
 #include <Arduino.h>
-#ifndef ADCDSP_H_INCLUDED
-#define ADCDSP_H_INCLUDED
+#ifndef ADCDSP_H
+#define ADCDSP_H
 
-struct vari{
+#define FS 44100          // Sample rate
 
-};
+enum adcState {DCState, ACState, IdleState};
+extern adcState interruptState;
 
-namespace DSP {
-    void RMS(){
+// struct vari{
+// };
 
-    }
+namespace DSPFuncs {
+    int RMS(uint32_t *statR, uint32_t pos);
+    float LPF(uint32_t *statR, uint32_t pos);
 }
 
 #endif

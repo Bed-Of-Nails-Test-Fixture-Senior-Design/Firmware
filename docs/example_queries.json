@@ -24,6 +24,10 @@
 }
 
 {
+    "Command": "MeasDC"
+}
+
+{
     "Command": "MeasDist",
     "Params": {
         "Power": 2.2
