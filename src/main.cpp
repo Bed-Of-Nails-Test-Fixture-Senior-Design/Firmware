@@ -2,6 +2,8 @@
 #include "../include/funcHandler.h"
 #include "../lib/ArduinoJson.h"
 
+#define PANCAKE_LED 12
+
 char Buf[200];
 String incomingStr;
 const size_t CAPACITY = JSON_OBJECT_SIZE(50);
@@ -13,6 +15,8 @@ void serialHandler();
 
 void setup()
 {
+  pinMode(PANCAKE_LED, OUTPUT);
+  digitalWrite(PANCAKE_LED, HIGH);
   Serial.begin(9600);
   dispatch.setup();
 }
@@ -21,11 +25,13 @@ void loop()
 {
   if (Serial.available())
   {
+    digitalWrite(PANCAKE_LED, LOW);
     incomingStr = Serial.readString();
     incomingStr.toCharArray(Buf, 200);
     deserializeJson(doc, Buf);
     jsonObj = doc.as<JsonObject>();
     serialHandler();
+    digitalWrite(PANCAKE_LED, HIGH);
   };
 }
 
