@@ -1,7 +1,8 @@
 #include "../include/ardSetup.h"
 
 int LUT[2048];
-uint32_t ADCResult[12];
+float ADCResult[12];
+uint32_t StaticRegisters[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
 adcChannel channels[12] = {
@@ -27,6 +28,7 @@ void ArdSetup(){
   UpdateNCOAmp(0.102);
   DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //set DAC1 to 1.22V
   while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait for DAC1 to set
+  Reset_ADCResult();
   // pinMode(13, OUTPUT);
   // pinMode(12, OUTPUT);
   // digitalWrite(13, LOW);
@@ -41,10 +43,10 @@ void TC3_Handler()
     if (ADC->ADC_CHSR & (0x1u << channels[i].adcNum)){
       switch (interruptState) {
         case DCState:
-          DSPFuncs::LPF(&ADCResult[i], channels[i].adcNum);
+          ADCResult[i] = DSPFuncs::LPF(&StaticRegisters[i], channels[i].adcNum);
           break;
         case ACState:
-          DSPFuncs::RMS(&ADCResult[i], channels[i].adcNum);
+          ADCResult[i] = DSPFuncs::RMS(&StaticRegisters[i], channels[i].adcNum);
           break;
         default:
           // Function call did not set the state correctly
@@ -93,29 +95,26 @@ void ADC_Setup(){
   ADC->ADC_EMR = 0;
 }
 
-void ADC_Set(int set){
-  switch (set){
-    case 1:
-      ADC->ADC_CHDR = 0x3c03u; //Disable A6->A11
-      ADC->ADC_CHER = 0x00fcu; //Enable A0->A5
-      break;
-    case 2:
-      ADC->ADC_CHDR = 0x00fcu; //Disable A0->A5
-      ADC->ADC_CHER = 0x3c03u; //Enable A6->A11
-      break;
-    default:
-      ADC->ADC_CHDR = 0x00fcu; //Disable A0->A5
-      ADC->ADC_CHDR = 0x3c03u; //Disable A6->A11
+void ADC_Start(int rangeLow, int rangeHigh){
+  for (int i = 0; i <= (rangeLow - 1); i++){
+    ADC->ADC_CHDR |= (0x1u << channels[i].adcNum);
+  }
+  for (int i = (rangeHigh + 1); i <= 11; i++){
+    ADC->ADC_CHDR |= (0x1u << channels[i].adcNum);
+  }
+  for (int i = rangeLow; i <= rangeHigh; i++) {
+    ADC->ADC_CHER |= (0x1u << channels[i].adcNum);
   }
 }
 
 void Reset_ADCResult(){
   for (int i = 0; i <= 11; i++) {
     ADCResult[i] = 0;
+    StaticRegisters[i] = 0;
   }
 }
 
-void UpdateNCOAmp(float amp){ //TODO NEED TO FIX CAST
+void UpdateNCOAmp(float amp){
   amp = (amp <= (0.2-amp)) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
   float scalingFactor = (amp*13.31) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)

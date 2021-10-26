@@ -97,7 +97,7 @@ float FirIirLpfFloat (float input) {
   float LastReg;
   
   LastReg = FilterReg;
-  FilterReg = input + ALPHA * FilterReg;
+  FilterReg = input + ALPHA * LastReg;
   return (FilterReg + LastReg)*(1.0 - ALPHA)/2.0;
 }
 

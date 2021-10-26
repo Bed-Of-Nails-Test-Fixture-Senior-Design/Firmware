@@ -40,19 +40,22 @@ bool FuncHandler::SigOff(){
     return true;
 }
 
+#define numOfSets 2 //must divide evenly into 12
+
 bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
+    int setInc = 12/numOfSets;
     interruptState = state;
-    for (int set = 1; set <= 2; set++){
+    for (int set=0; set <= 11; set += setInc){
         stopTime = millis() + MEASURE_TIME;
-        ADC_Set(set);
+        ADC_Start(set, (set-1)+setInc);
         while (millis()<=stopTime);
-        for (int i = 6*(set-1); i <= (6*(set-1)+5); i++) {
+        for (int i = set; i < (set+setInc); i++) {
             results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
             if (state == ACState) results[i].Freq = 4000;   //TODO need to figure out if frequency is necessary/possible
         }
     }
-    ADC_Set(0);
+    ADC_Start(0, -1);
     interruptState = IdleState;
     Reset_ADCResult();          //Reset Static Registers
     return true;
