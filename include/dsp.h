@@ -11,8 +11,8 @@ extern adcState interruptState;
 // };
 
 namespace DSPFuncs {
-    int RMS(uint32_t *statR, uint32_t pos);
-    float LPF(uint32_t *statR, uint32_t pos);
+    int RMS(uint32_t *statR, int pos);
+    int LPF(uint32_t *statR, int pos);
 }
 
 #endif

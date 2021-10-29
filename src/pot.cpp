@@ -1,7 +1,7 @@
 #include "../include/POT.h"
 
 // Writes to digital outputs to control potentiometer relays
-POT::POT(int inCCW, int inMID, int inCW) {	//constructor POT
+POT::POT(int inCW, int inMID, int inCCW) {	//constructor POT
     pinMode(inCCW, OUTPUT);
     pinMode(inMID, OUTPUT);
     pinMode(inCW, OUTPUT);

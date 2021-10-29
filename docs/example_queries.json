@@ -183,3 +183,46 @@
         "Success": true
     }
 }
+
+{
+    "Action": "MeasDC",
+    "Result": {
+        "Success": true,
+        "PreAmpOut": {
+            "Level": 4.625
+        },
+        "6VOut": {
+            "Level": 5.893
+        },
+        "EmitFlloOut": {
+            "Level": 6.394
+        },
+        "SrcFlloOut": {
+            "Level": 3.708
+        },
+        "GainStageOut": {
+            "Level": 6.699
+        },
+        "EmitBypOut": {
+            "Level": 2.847
+        },
+        "12VOut": {
+            "Level": 12.011
+        },
+        "8VOut": {
+            "Level": 8.021
+        },
+        "PosDrvOut": {
+            "Level": 5.912
+        },
+        "NegDrvOut": {
+            "Level": 5.903
+        },
+        "SPRKPos": {
+            "Level": 5.273
+        },
+        "SPRKNeg": {
+            "Level": 5.298
+        }
+    }
+}

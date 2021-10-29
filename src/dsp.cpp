@@ -3,25 +3,31 @@
 adcState interruptState = IdleState;
 
 
-int DSPFuncs::RMS(uint32_t *statR, uint32_t pos){
+int DSPFuncs::RMS(uint32_t *statR, int pos){
     *statR = ADC->ADC_CDR[pos];
     return *statR;
 }
 
 
 #define FCutoff 100
-#define ALPHA ((float)(1-(FCutoff/FS)*2.0*PI))
+#define ALPHA ((int)(1-(FCutoff/FS)*2.0*PI))
+#define FILTER_SHIFT  5
 /**
  * Lowpass Filter to measure DC level
  *
  * @param[out] statR Running "static" register
  * @param[in] pos Position to read next ADC value from
  */
-float DSPFuncs::LPF(uint32_t *statR, uint32_t pos){
-    // float lastReg;
+int DSPFuncs::LPF(uint32_t *statR, int pos){
+    // int lastReg;
     // lastReg = *statR;
     // *statR = lastReg*ALPHA + ADC->ADC_CDR[pos];
-    // return (float)((*statR+lastReg)*((1-ALPHA)/2));
-    *statR = ADC->ADC_CDR[pos];
-    return (float)*statR;
+    // return ((int)((*statR+lastReg)*((1-ALPHA)/2)));
+    // *statR = ADC->ADC_CDR[pos];
+    // return (int)*statR;
+    long LastReg;                 // Temporary storage
+  
+    LastReg = *statR;
+    *statR = *statR - (*statR >> FILTER_SHIFT) + ADC->ADC_CDR[pos];
+    return (int)((*statR + LastReg) >> (FILTER_SHIFT + 1));
 }
