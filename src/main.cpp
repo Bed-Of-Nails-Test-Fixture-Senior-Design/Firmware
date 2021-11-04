@@ -40,13 +40,14 @@ void serialHandler()
   const char *command = jsonObj["Command"];
   if (strcmp(command, "SigOn") == 0)
   {
-    int cast;
+    float freqCast, ampCast;
     rtn["Action"] = "SigOn";
     rtn["Result"]["Success"] = dispatch.SigOn(jsonObj["Params"]["Channel"],
                                               jsonObj["Params"]["Level"].as<float>(),
                                               jsonObj["Params"]["Freq"].as<int>(),
-                                              &cast);
-    rtn["Result"]["FreqCast"] = cast;
+                                              &freqCast, &ampCast);
+    rtn["Result"]["freqCast"] = freqCast;
+    rtn["Result"]["ampCast"] = ampCast;
   }
   else if (strcmp(command, "SigOff") == 0)
   {

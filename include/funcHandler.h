@@ -21,7 +21,7 @@ private:
 public:
     FuncHandler();
     void setup();
-    bool SigOn(const char *chan, float inputLevel, int frequency, int *freqCast);
+    bool SigOn(const char *chan, float inputLevel, int frequency, float *freqCast, float *ampCast);
     bool SigOff();
     bool Measure(result (&results)[12], adcState state);
     bool MeasDist(float outputPower);

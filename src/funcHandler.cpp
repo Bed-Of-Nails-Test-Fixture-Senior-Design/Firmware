@@ -18,8 +18,8 @@ void FuncHandler::setup(){
     DrivePot.set_CCW();
 }
 
-bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, int *freqCast){
-    UpdateNCOAmp(inputLevel);
+bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, float *freqCast, float *ampCast){
+    *ampCast = UpdateNCOAmp(inputLevel);
     *freqCast = UpdateNCOFreq(frequency);
     if (strcmp(chan, "Aux") == 0)  {
         channel_flag = 0;

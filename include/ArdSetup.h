@@ -28,7 +28,7 @@ void Reset_ADCResult();
 
 void LP_Filter(uint32_t *statR, uint32_t pos);
 
-void UpdateNCOAmp(float amp);
-int UpdateNCOFreq(int freq);
+float UpdateNCOAmp(float amp);
+float UpdateNCOFreq(int freq);
 
 #endif

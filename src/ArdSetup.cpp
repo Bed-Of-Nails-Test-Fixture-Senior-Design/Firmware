@@ -114,16 +114,17 @@ void Reset_ADCResult(){
   }
 }
 
-void UpdateNCOAmp(float amp){
+float UpdateNCOAmp(float amp){
   amp = (amp <= (0.2-amp)) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
   float scalingFactor = (amp*13.31) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)
     {
         LUT[i] = (int)((2047 * sin(2 * PI * i / 2048) + 2048)*scalingFactor); // build lookup table for our digitally created sine wave
     }
+  return amp;
 }
 
-int UpdateNCOFreq(int freq){
+float UpdateNCOFreq(int freq){
   FreqInc = (int)(freq*2048/44100);
-  return FreqInc;
+  return FreqInc*44100/2048;
 }
