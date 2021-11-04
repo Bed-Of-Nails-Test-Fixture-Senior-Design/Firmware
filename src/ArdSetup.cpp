@@ -109,7 +109,6 @@ void ADC_Start(int rangeLow, int rangeHigh){
 
 void Reset_ADCResult(){
   for (int i = 0; i <= 11; i++) {
-    ADCResult[i] = 0;
     StaticRegisters[i] = 0;
   }
 }

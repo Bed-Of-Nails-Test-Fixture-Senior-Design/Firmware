@@ -40,7 +40,7 @@ bool FuncHandler::SigOff(){
     return true;
 }
 
-#define numOfSets 2 //must divide evenly into 12
+#define numOfSets 12 //must divide evenly into 12
 
 bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
