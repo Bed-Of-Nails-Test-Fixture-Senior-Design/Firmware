@@ -29,10 +29,7 @@
     int measAC(int AdcResult) {
         
         LpfFiltReg = 0L;
-        LoopInteg = 0L;
-        AmplExcQuanta = 0L;
         
-        AdcResult = (AdcResult - 2047); //im not sure if we need this, but supposedly this is to "remove nominal DC from the ADCresult"
 
         // Highpass filter the input with IIR filter. This filter mimics an RC (single pole) lowpass filter, but has a zero at FS/2.
         // Highpass is realized by Highpass = 1 - Lowpass. Highpass cutoff is 100 Hz.
