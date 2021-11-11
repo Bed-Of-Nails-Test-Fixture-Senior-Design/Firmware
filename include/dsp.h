@@ -8,8 +8,8 @@ enum adcState {DCState, ACState, IdleState};
 extern adcState interruptState;
 
 namespace DSPFuncs {
-    int RMS(uint32_t *statR, int pos);
-    int LPF(uint32_t *statR, int pos);
+    int RMS(uint32_t *lpfR, uint32_t *hpfR, int pos);
+    int LPF(uint32_t *lpfR, int pos);
 }
 
 #endif

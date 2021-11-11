@@ -51,13 +51,17 @@ bool FuncHandler::Measure(result (&results)[12], adcState state){
         ADC_Start(set, (set-1)+setInc);
         while (millis()<=stopTime);
         for (int i = set; i < (set+setInc); i++) {
-            results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
-            if (state == ACState) results[i].Freq = 4000;   //TODO need to figure out if frequency is necessary/possible
+            if (state == ACState) {
+                results[i].Level = CONVERT(sqrt(ADCResult[i]))*channels[i].slope + channels[i].offset;
+                results[i].Freq = 0;   //TODO need to figure out if frequency is necessary/possible
+            } else if (state == DCState) {
+                results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
+            }
         }
     }
     ADC_Start(0, -1);
     interruptState = IdleState;
-    Reset_ADCResult();          //Reset Static Registers
+    Reset_StaticRegisters();          //Reset Static Registers
     return true;
 }
 

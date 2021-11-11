@@ -2,7 +2,8 @@
 
 int LUT[2048];
 float ADCResult[12];
-uint32_t StaticRegisters[12];
+uint32_t LPFRegisters[12];
+uint32_t HPFRegisters[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
 adcChannel channels[12] = {
@@ -28,7 +29,7 @@ void ArdSetup(){
   UpdateNCOAmp(0.102);
   DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //set DAC1 to 1.22V
   while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait for DAC1 to set
-  Reset_ADCResult();
+  Reset_StaticRegisters();
   // pinMode(13, OUTPUT);
   // pinMode(12, OUTPUT);
   // digitalWrite(13, LOW);
@@ -43,10 +44,10 @@ void TC3_Handler()
     if (ADC->ADC_CHSR & (0x1u << channels[i].adcNum)){
       switch (interruptState) {
         case DCState:
-          ADCResult[i] = DSPFuncs::LPF(&StaticRegisters[i], channels[i].adcNum);
+          ADCResult[i] = DSPFuncs::LPF(&LPFRegisters[i], channels[i].adcNum);
           break;
         case ACState:
-          ADCResult[i] = DSPFuncs::RMS(&StaticRegisters[i], channels[i].adcNum);
+          ADCResult[i] = DSPFuncs::RMS(&LPFRegisters[i],HPFRegisters[i], channels[i].adcNum);
           break;
         default:
           // Function call did not set the state correctly
@@ -107,9 +108,10 @@ void ADC_Start(int rangeLow, int rangeHigh){
   }
 }
 
-void Reset_ADCResult(){
+void Reset_StaticRegisters(){
   for (int i = 0; i <= 11; i++) {
-    StaticRegisters[i] = 0;
+    LPFRegisters[i] = 0;
+    HPFRegisters[i] = 0;
   }
 }
 

@@ -24,7 +24,7 @@ void timerSetup(Tc *tc, uint32_t channel, IRQn_Type irq, uint32_t frequency);
 void DAC_Setup();
 void ADC_Setup();
 void ADC_Start(int rangeLow, int rangeHigh);
-void Reset_ADCResult();
+void Reset_StaticRegisters();
 
 void LP_Filter(uint32_t *statR, uint32_t pos);
 
