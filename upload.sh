@@ -15,5 +15,5 @@ fi
 cd ../..
 pio run -t upload
 
-echo "Press any key to exit"
+echo "Press Enter to exit"
 read
