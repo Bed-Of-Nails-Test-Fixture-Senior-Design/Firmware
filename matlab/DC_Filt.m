@@ -1,14 +1,14 @@
-Fc = 10;
+Fc = 2000;
 n = 1;
 
 % Digital Version of LPF
 Fs = 44100;
 Wn = 2*pi*Fc/Fs;
-[zd,pd,kd] = butter(n,Wn);
+[zd,pd,kd] = butter(n,Wn, 'high');
 [bd,ad] = zp2tf(zd,pd,kd);
 [hd,wd] = freqz(bd,ad,Fs,Fs);
 plot(wd/pi,20*log10(abs(hd)));
-axis([0 40 -20 5])
+axis([0 5000 -40 5])
 
 tf(bd,ad,1/Fs)
 

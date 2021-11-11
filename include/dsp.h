@@ -7,9 +7,6 @@
 enum adcState {DCState, ACState, IdleState};
 extern adcState interruptState;
 
-// struct vari{
-// };
-
 namespace DSPFuncs {
     int RMS(uint32_t *statR, int pos);
     int LPF(uint32_t *statR, int pos);
