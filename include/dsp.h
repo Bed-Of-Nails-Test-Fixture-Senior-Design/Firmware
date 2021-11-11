@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "../lib/FFT/arduinoFFT.h"
 #ifndef ADCDSP_H
 #define ADCDSP_H
 
