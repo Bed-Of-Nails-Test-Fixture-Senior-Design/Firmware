@@ -40,7 +40,7 @@ bool FuncHandler::SigOff(){
     return true;
 }
 
-#define numOfSets 12 //must divide evenly into 12
+#define numOfSets 4 //must divide evenly into 12
 
 bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
@@ -52,10 +52,10 @@ bool FuncHandler::Measure(result (&results)[12], adcState state){
         while (millis()<=stopTime);
         for (int i = set; i < (set+setInc); i++) {
             if (state == ACState) {
-                results[i].Level = CONVERT(sqrt(ADCResult[i]))*channels[i].slope + channels[i].offset;
+                results[i].Level = CONVERT(sqrt(ADCResult[i])); //*channels[i].slope + channels[i].offset;
                 results[i].Freq = 0;   //TODO need to figure out if frequency is necessary/possible
             } else if (state == DCState) {
-                results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
+                results[i].Level = CONVERT(ADCResult[i]); //*channels[i].slope + channels[i].offset;
             }
         }
     }

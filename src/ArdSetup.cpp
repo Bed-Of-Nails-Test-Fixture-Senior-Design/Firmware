@@ -47,7 +47,7 @@ void TC3_Handler()
           ADCResult[i] = DSPFuncs::LPF(&LPFRegisters[i], channels[i].adcNum);
           break;
         case ACState:
-          ADCResult[i] = DSPFuncs::RMS(&LPFRegisters[i],HPFRegisters[i], channels[i].adcNum);
+          ADCResult[i] = DSPFuncs::RMS(&LPFRegisters[i], &HPFRegisters[i], channels[i].adcNum);
           break;
         default:
           // Function call did not set the state correctly
