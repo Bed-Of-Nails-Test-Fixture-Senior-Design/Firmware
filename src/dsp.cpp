@@ -44,9 +44,22 @@ int DSPFuncs::LPF(uint32_t *lpfR, int pos){
 /**
  * IQ Demodulator for measuring distortion
  *
- * @param[out] lpfR Running "static" register to perform lowpass filter
+ * @param[out] lpfCos Running "static" register to perform lowpass filter on Cos result 
+ * @param[out] lpfSin Running "static" register to perform lowpass filter on Sin result
+ * @param[in] cosSin Cosine/Sine table for IQ demodulation
  * @param[in] pos Position to read next ADC value from
  */
-int DSPFuncs::IQ(uint32_t *lpfR, int pos){
-    return (int)(ADC->ADC_CDR[pos]);
+int DSPFuncs::IQ(uint32_t *lpfCos, uint32_t *lpfSin, uint32_t cosSin, int pos){
+    uint32_t cosValue = (cosSin & 0xFFFF) * ADC->ADC_CDR[pos];
+    uint32_t sinValue = ((cosSin >> 16) & 0xFFFF) * ADC->ADC_CDR[pos];  
+
+    long LastReg = *lpfCos;
+    *lpfCos = LastReg - (LastReg >> FILTER_SHIFT) + cosValue;
+    long cosResult = (long)((*lpfCos + LastReg) >> (FILTER_SHIFT + 1));
+    
+    LastReg = *lpfSin;
+    *lpfSin = LastReg - (LastReg >> FILTER_SHIFT) + sinValue;
+    long sinResult = (int)((*lpfSin + LastReg) >> (FILTER_SHIFT + 1));
+
+    return (int)(ADC->ADC_CDR[pos]);    //TODO return square of results somehow
 }

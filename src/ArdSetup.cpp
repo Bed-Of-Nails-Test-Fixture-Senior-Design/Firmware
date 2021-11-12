@@ -1,8 +1,9 @@
 #include "../include/ardSetup.h"
 
-int LUT[2048];
+int LUT[tableLength];
 float ADCResult[12];
-uint32_t LPFRegisters[12], HPFRegisters[12];
+uint32_t LPFRegisters[12], LPF2Registers[12], HPFRegisters[12];
+uint32_t CosSinTable[tableLength];
 unsigned int cycle;
 int FreqInc, channel_flag;
 adcChannel channels[12] = {
@@ -22,6 +23,12 @@ adcChannel channels[12] = {
 };
 
 void ArdSetup(){
+  u_int32_t cosPart, sinPart;
+  for (int i=0; i<tableLength; i++){
+    cosPart = (u_int32_t)(2047*cos(2*PI*i/tableLength) + 2048);
+    sinPart = (u_int32_t)(2047*sin(2*PI*i/tableLength) + 2048) << 16;
+    CosSinTable[i] = cosPart || sinPart;
+  }
   cycle = 0;
   channel_flag = 0;
   UpdateNCOFreq(0);
@@ -48,14 +55,14 @@ void TC3_Handler()
         case ACState:
           ADCResult[i] = DSPFuncs::RMS(&LPFRegisters[i], &HPFRegisters[i], channels[i].adcNum);
           break;
+        case DISTState:
+          ADCResult[i] = DSPFuncs::IQ(&LPFRegisters[i], &LPF2Registers[i], CosSinTable[i], channels[i].adcNum);
+          break;
         default:
           // Function call did not set the state correctly
           break;
       }
     }
-  }
-  if (interruptState == DISTState) {
-    ADCResult[0] = DSPFuncs::IQ(&LPFRegisters[0], channels[0].adcNum);
   }
   // digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
   ADC->ADC_CR |= ADC_CR_START;
@@ -113,6 +120,7 @@ void ADC_Start(int rangeLow, int rangeHigh){
 void Reset_StaticRegisters(){
   for (int i = 0; i <= 11; i++) {
     LPFRegisters[i] = 0;
+    LPF2Registers[i] = 0;
     HPFRegisters[i] = 0;
   }
 }

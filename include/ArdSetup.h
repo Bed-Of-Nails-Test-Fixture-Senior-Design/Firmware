@@ -7,6 +7,7 @@
 #define DAC_IDLE 0      //TODO: Figure out drop across
 #define DAC2_SHIFT 13
 #define DAC1_SHIFT 12
+#define tableLength  2048
 
 struct adcChannel {
     String name;
