@@ -48,13 +48,14 @@ void TC3_Handler()
         case ACState:
           ADCResult[i] = DSPFuncs::RMS(&LPFRegisters[i], &HPFRegisters[i], channels[i].adcNum);
           break;
-        case DISTState:
-          ADCResult[i] = DSPFuncs::
         default:
           // Function call did not set the state correctly
           break;
       }
     }
+  }
+  if (interruptState == DISTState) {
+    ADCResult[0] = DSPFuncs::IQ(&LPFRegisters[0], channels[0].adcNum);
   }
   // digitalWrite(12, (((ADC->ADC_ISR & 0xffffu) == 0x3cffu) ? HIGH : LOW));
   ADC->ADC_CR |= ADC_CR_START;
