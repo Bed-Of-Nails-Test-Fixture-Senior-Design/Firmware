@@ -72,6 +72,7 @@ bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
     int setInc = 12/numOfSets;
     interruptState = state;
+    Sleep(5000);
     for (int set=0; set <= 11; set += setInc){
         stopTime = millis() + MEASURE_TIME;
         ADC_Start(set, (set-1)+setInc);

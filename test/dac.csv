@@ -1,13 +1,2 @@
 
 Date,Test,Command,Executed,Result
-Wed Nov 17 2021 22:11:53 GMT-0800 (Pacific Standard Time),DC Test,MeasDC,true,PreAmpOut: 5.067V; GainStageOut: 6.342V; EmitBypOut: 3.081V; EmitFlloOut: 3.638V; SrcFlloOut: 4.671V; 12VOut: 12.176V; 8VOut: 8.996V; 6VOut: 6.501V; NegDrvOut: 7.354V; PosDrvOut: 6.367V; SPRKPos: 7.404V; SPRKNeg: 6.345V; 
-Wed Nov 17 2021 22:11:53 GMT-0800 (Pacific Standard Time),DC test,,,failed
-Date,Test,Command,Executed,Result
-Wed Nov 17 2021 22:28:03 GMT-0800 (Pacific Standard Time),DC Test,MeasDC,true,PreAmpOut: 4.718V; GainStageOut: 4.542V; EmitBypOut: 3.537V; EmitFlloOut: 3.664V; SrcFlloOut: 4.828V; 12VOut: 12.171V; 8VOut: 9.002V; 6VOut: 6.508V; NegDrvOut: 7.112V; PosDrvOut: 6.709V; SPRKPos: 6.772V; SPRKNeg: 7.073V; 
-Wed Nov 17 2021 22:28:03 GMT-0800 (Pacific Standard Time),DC test,,,failed
-Date,Test,Command,Executed,Result
-Wed Nov 17 2021 22:31:51 GMT-0800 (Pacific Standard Time),DC Test,MeasDC,true,PreAmpOut: 4.657V; GainStageOut: 3.776V; EmitBypOut: 3.526V; EmitFlloOut: 3.622V; SrcFlloOut: 4.733V; 12VOut: 12.174V; 8VOut: 8.955V; 6VOut: 6.455V; NegDrvOut: 6.988V; PosDrvOut: 6.652V; SPRKPos: 7.268V; SPRKNeg: 6.458V; 
-Wed Nov 17 2021 22:31:51 GMT-0800 (Pacific Standard Time),DC test,,,failed
-Date,Test,Command,Executed,Result
-Wed Nov 17 2021 22:38:18 GMT-0800 (Pacific Standard Time),DC Test,MeasDC,true,PreAmpOut: 4.591V; GainStageOut: 5.609V; EmitBypOut: 2.911V; EmitFlloOut: 3.521V; SrcFlloOut: 4.567V; 12VOut: 12.415V; 8VOut: 8.875V; 6VOut: 6.379V; NegDrvOut: 6.757V; PosDrvOut: 6.73V; SPRKPos: 6.85V; SPRKNeg: 6.979V; 
-Wed Nov 17 2021 22:38:18 GMT-0800 (Pacific Standard Time),DC test,,,failed

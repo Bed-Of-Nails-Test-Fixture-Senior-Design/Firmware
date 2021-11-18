@@ -6,21 +6,6 @@ uint32_t LPFRegisters[12], LPF2Registers[12], HPFRegisters[12];
 uint32_t CosSinTable[tableLength];
 unsigned int cycle;
 int FreqInc, channel_flag;
-// adcChannel channelsold[12] = {
-//     //Name, adcNum, slope, offset
-//     {"PreAmpOut", 7, 2.356, 0.582},
-//     {"6VOut", 6, 2.723, 0.453},
-//     {"EmitFlloOut", 5, 2.502, 0.558},
-//     {"SrcFlloOut", 4, 3.806, 0.679},
-//     {"GainStageOut", 3, 2.604, 0.245},
-//     {"EmitBypOut", 2, 2.777, -0.027},
-//     {"12VOut", 1, 3.612, 0.737},
-//     {"8VOut", 0, 3.647, 0.989},
-//     {"PosDrvOut", 10, 3.759, 0.74},
-//     {"NegDrvOut", 11, 3.759, 0.764},
-//     {"SPRKPos", 12, 3.758, 0.789},
-//     {"SPRKNeg", 13, 3.784, 0.784}
-// };
 
 adcChannel channels[12] = {
     //Name, adcNum, slope, offset
