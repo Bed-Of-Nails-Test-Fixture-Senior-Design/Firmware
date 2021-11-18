@@ -4,9 +4,10 @@
 #ifndef ARDSETUP_H_INCLUDED
 #define ARDSETUP_H_INCLUDED
 
-#define DAC_IDLE 1248     // 1.22V
+#define DAC_IDLE 0      //TODO: Figure out drop across
 #define DAC2_SHIFT 13
 #define DAC1_SHIFT 12
+#define tableLength  2048
 
 struct adcChannel {
     String name;

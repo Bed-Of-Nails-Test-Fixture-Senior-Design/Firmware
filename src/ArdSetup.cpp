@@ -1,9 +1,9 @@
 #include "../include/ardSetup.h"
 
-int LUT[2048];
+int LUT[tableLength];
 float ADCResult[12];
-uint32_t LPFRegisters[12];
-uint32_t HPFRegisters[12];
+uint32_t LPFRegisters[12], LPF2Registers[12], HPFRegisters[12];
+uint32_t CosSinTable[tableLength];
 unsigned int cycle;
 int FreqInc, channel_flag;
 // adcChannel channelsold[12] = {
@@ -39,11 +39,17 @@ adcChannel channels[12] = {
 };
 
 void ArdSetup(){
+  u_int32_t cosPart, sinPart;
+  for (int i=0; i<tableLength; i++){
+    cosPart = (u_int32_t)(2047*cos(2*PI*i/tableLength) + 2048);
+    sinPart = (u_int32_t)(2047*sin(2*PI*i/tableLength) + 2048) << 16;
+    CosSinTable[i] = cosPart || sinPart;
+  }
   cycle = 0;
   channel_flag = 0;
   UpdateNCOFreq(0);
   UpdateNCOAmp(0.102);
-  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //set DAC1 to 1.22V
+  DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);          //Set DAC1 to idle
   while ((dacc_get_interrupt_status(DACC_INTERFACE) & DACC_ISR_EOC) == 0);  //wait for DAC1 to set
   Reset_StaticRegisters();
   // pinMode(13, OUTPUT);
@@ -64,6 +70,9 @@ void TC3_Handler()
           break;
         case ACState:
           ADCResult[i] = DSPFuncs::RMS(&LPFRegisters[i], &HPFRegisters[i], channels[i].adcNum);
+          break;
+        case DISTState:
+          ADCResult[i] = DSPFuncs::IQ(&LPFRegisters[i], &LPF2Registers[i], CosSinTable[i], channels[i].adcNum);
           break;
         default:
           // Function call did not set the state correctly
@@ -127,17 +136,18 @@ void ADC_Start(int rangeLow, int rangeHigh){
 void Reset_StaticRegisters(){
   for (int i = 0; i <= 11; i++) {
     LPFRegisters[i] = 0;
+    LPF2Registers[i] = 0;
     HPFRegisters[i] = 0;
   }
 }
 
 void calcFFT(){
   arduinoFFT FFT = arduinoFFT();
-  //FFT.Windowing();
+  // FFT.Windowing();
 }
 
 float UpdateNCOAmp(float amp){
-  amp = (amp <= (0.2-amp)) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
+  amp = ((amp >= 0) && (amp <= 0.2)) ? amp : 0.2;  // user must enter between 0 and 0.2V RMS, if user enters value out of bounds, automatically set amplitude to 2.75V e.g. scalingFactor = 1
   float scalingFactor = (amp*13.31) / 2.75; //this will return a value between [0,1] as a ratio with respect to the max amplitude, i.e. if the user enters 0.075V RMS, the scaling factor will be 0.5 which is half
   for (int i = 0; i < 2048; i++)
     {
@@ -148,5 +158,5 @@ float UpdateNCOAmp(float amp){
 
 float UpdateNCOFreq(int freq){
   FreqInc = (int)(freq*2048/44100);
-  return FreqInc*44100/2048;
+  return (float)(FreqInc*44100/2048);
 }

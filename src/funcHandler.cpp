@@ -18,6 +18,18 @@ void FuncHandler::setup(){
     DrivePot.set_CCW();
 }
 
+/**
+ * Turns on one of the DAC outputs and turns the other one to the idle state.
+ * Both DAC's should not be on at the same time.
+ *
+ * @param[in] chan DAC Channel to turn on 
+ * @param[in] inputLevel Sets the rms amplitude. Calibrated for 0.2Vrms max output.
+ * @param[in] frequency Frequency of the DAC output. Will likely be casted to the next closest increment.
+ * @param[out] freqCast Actual frequency the output was set to due to resolution constraints
+ * @param[out] ampCast Actual amplitude the output was set to due to resolution/bound constraints
+ * @return Whether or not the function was executed successfully,
+ *      invalid channel or control parameters will return false.
+ */
 bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, float *freqCast, float *ampCast){
     *ampCast = UpdateNCOAmp(inputLevel);
     *freqCast = UpdateNCOFreq(frequency);
@@ -33,6 +45,11 @@ bool FuncHandler::SigOn(const char *chan, float inputLevel, int frequency, float
     return true;
 }
 
+/**
+ * Turn off both DAC outputs
+ *
+ * @return Whether or not the function was executed successfully.
+ */
 bool FuncHandler::SigOff(){
     UpdateNCOFreq(0);
     DACC->DACC_CDR = DACC_CDR_DATA(DAC_IDLE) | (0x1u << DAC2_SHIFT);
@@ -41,7 +58,16 @@ bool FuncHandler::SigOff(){
 }
 
 #define numOfSets 4 //must divide evenly into 12
-
+/**
+ * Measure DC or AC RMS values. Measurement time can be sped up by multiplexing
+ * the ADC and running DC or AC algorithms in parallel. This is set by the numOfSets
+ * define variable.
+ *
+ * @param[out] results Array of results for each ADC channel
+ * @param[in] state 'DCState' or 'ACState' determines algorithm to run on adc inputs
+ * @return Whether or not the function was executed successfully,
+ *      invalid channel or control parameters will return false.
+ */
 bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
     int setInc = 12/numOfSets;
@@ -69,6 +95,13 @@ bool FuncHandler::Measure(result (&results)[12], adcState state){
  * Measure Distortion --- Stretch Goal
  */
 bool FuncHandler::MeasDist(float outputPower){
+    unsigned long stopTime;
+    interruptState = DISTState;
+    stopTime = millis() + MEASURE_TIME;
+    ADC->ADC_CHER |= (0x1u << channels[0].adcNum);
+    while (millis()<=stopTime);
+    ADC->ADC_CHDR |= (0x1u << channels[0].adcNum);
+    interruptState = IdleState;
     return true;
 }
 
