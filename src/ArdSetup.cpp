@@ -6,20 +6,36 @@ uint32_t LPFRegisters[12];
 uint32_t HPFRegisters[12];
 unsigned int cycle;
 int FreqInc, channel_flag;
+// adcChannel channelsold[12] = {
+//     //Name, adcNum, slope, offset
+//     {"PreAmpOut", 7, 2.356, 0.582},
+//     {"6VOut", 6, 2.723, 0.453},
+//     {"EmitFlloOut", 5, 2.502, 0.558},
+//     {"SrcFlloOut", 4, 3.806, 0.679},
+//     {"GainStageOut", 3, 2.604, 0.245},
+//     {"EmitBypOut", 2, 2.777, -0.027},
+//     {"12VOut", 1, 3.612, 0.737},
+//     {"8VOut", 0, 3.647, 0.989},
+//     {"PosDrvOut", 10, 3.759, 0.74},
+//     {"NegDrvOut", 11, 3.759, 0.764},
+//     {"SPRKPos", 12, 3.758, 0.789},
+//     {"SPRKNeg", 13, 3.784, 0.784}
+// };
+
 adcChannel channels[12] = {
     //Name, adcNum, slope, offset
-    {"PreAmpOut", 7, 2.703, 0},
-    {"6VOut", 6, 2.71, 0},
-    {"EmitFlloOut", 5, 2.703, 0},
-    {"SrcFlloOut", 4, 3.676, 0},
-    {"GainStageOut", 3, 2.71, 0},
-    {"EmitBypOut", 2, 2.71, 0},
-    {"12VOut", 1, 3.704, 0},
-    {"8VOut", 0, 3.704, 0},
-    {"PosDrvOut", 10, 3.704, 0},
-    {"NegDrvOut", 11, 3.704, 0},
-    {"SPRKPos", 12, 3.704, 0},
-    {"SPRKNeg", 13, 3.717, 0}
+    {"PreAmpOut", 7, 2.704, -0.003},     //TP4
+    {"6VOut", 6, 2.707, 0.004},         //TP8
+    {"EmitFlloOut", 5, 2.706, -0.007},   //TP10
+    {"SrcFlloOut", 4, 3.706, 0.01},    //TP13
+    {"GainStageOut", 3, 2.707, 0.001},  //TP6
+    {"EmitBypOut", 2, 2.704, -0.003},   //TP7
+    {"12VOut", 1, 3.704, 0.004},        //TP3
+    {"8VOut", 0, 3.704, 0},         //TP5
+    {"PosDrvOut", 10, 3.704, 0.011},    //TP11
+    {"NegDrvOut", 11, 3.701, 0.007},    //TP9
+    {"SPRKPos", 12, 3.704, 0.004},      //TP12
+    {"SPRKNeg", 13, 3.726, -0.017}       //TP14
 };
 
 void ArdSetup(){
