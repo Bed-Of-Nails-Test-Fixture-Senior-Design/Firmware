@@ -72,20 +72,26 @@ bool FuncHandler::Measure(result (&results)[12], adcState state){
     unsigned long stopTime;
     int setInc = 12/numOfSets;
     interruptState = state;
-    Sleep(5000);
-    for (int set=0; set <= 11; set += setInc){
-        stopTime = millis() + MEASURE_TIME;
-        ADC_Start(set, (set-1)+setInc);
-        while (millis()<=stopTime);
-        for (int i = set; i < (set+setInc); i++) {
-            if (state == ACState) {
-                results[i].Level = CONVERT(sqrt(ADCResult[i]))*channels[i].slope + channels[i].offset;
-                results[i].Freq = 0;   //TODO need to figure out if frequency is necessary/possible
-            } else if (state == DCState) {
-                results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
-            }
-        }
-    }
+    // Sleep(1000);
+    // for (int set=0; set <= 11; set += setInc){
+    //     stopTime = millis() + MEASURE_TIME;
+    //     ADC_Start(set, (set-1)+setInc);
+    //     while (millis()<=stopTime);
+    //     for (int i = set; i < (set+setInc); i++) {
+    //         if (state == ACState) {
+    //             results[i].Level = CONVERT(sqrt(ADCResult[i]))*channels[i].slope + channels[i].offset;
+    //             results[i].Freq = 0;   //TODO need to figure out if frequency is necessary/possible
+    //         } else if (state == DCState) {
+    //             results[i].Level = CONVERT(ADCResult[i])*channels[i].slope + channels[i].offset;
+    //         }
+    //     }
+    // }
+    //FAST MEASURE --------------------------------------
+    stopTime = millis() + MEASURE_TIME;
+    ADC_Start(10, 10);
+    while (millis()<=stopTime);
+    results[10].Level = CONVERT(sqrt(ADCResult[10]))*channels[10].slope + channels[10].offset;
+    //FAST MEASURE --------------------------------------
     ADC_Start(0, -1);
     interruptState = IdleState;
     Reset_StaticRegisters();          //Reset Static Registers
