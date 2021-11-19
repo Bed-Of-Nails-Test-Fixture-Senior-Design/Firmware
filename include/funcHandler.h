@@ -6,7 +6,7 @@
 #define FUNCH_H_INCLUDED
 
 #define PRESENCE 2
-#define MEASURE_TIME 1000   //Amount of time the ADC's will measure in milliseconds
+#define MEASURE_TIME 2000   //Amount of time the ADC's will measure in milliseconds
 
 struct result {float Level, Freq;};
 
