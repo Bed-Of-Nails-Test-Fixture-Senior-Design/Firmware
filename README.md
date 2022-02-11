@@ -11,4 +11,6 @@ Requirements:
 Process:
 Run upload.sh (either by double clicking or `./upload.sh` from within terminal)
 
+This is a demonstration
+
 The program will autolocate the port for your connected Arduino Due, therefore you should only have one Arduino Due plugged in at a time.
