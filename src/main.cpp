@@ -4,6 +4,8 @@
 
 #define PANCAKE_LED 12
 
+char Cade;
+
 char Buf[200];
 String incomingStr;
 const size_t CAPACITY = JSON_OBJECT_SIZE(50);
