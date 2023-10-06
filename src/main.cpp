@@ -4,8 +4,9 @@
 
 #define PANCAKE_LED 12
 
-char Cade;
 char Cade2;
+
+char SeniorDesign2023;
 
 char Buf[200];
 String incomingStr;
